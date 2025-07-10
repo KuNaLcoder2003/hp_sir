@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+:root{
+    overflow-x: hidden;
+    padding: 0;
+}
+
+@theme {
+  --breakpoint-3xl: 160rem;
+  --break-point-dxl :  26.875rem;
+}
