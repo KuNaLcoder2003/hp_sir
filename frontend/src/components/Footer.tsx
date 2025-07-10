@@ -1,5 +1,5 @@
-import { FacebookIcon, LinkedinIcon, MailIcon, TwitchIcon } from 'lucide-react'
-import React , {useState, useEffect} from 'react'
+import {LinkedinIcon, MailIcon} from 'lucide-react'
+import {useState, useEffect} from 'react'
 import { FaTelegram } from 'react-icons/fa'
 
 const useWindowWidth = () => {
