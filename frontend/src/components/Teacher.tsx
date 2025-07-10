@@ -7,7 +7,7 @@ const Teacher = () => {
                 <h2 className='lg:w-[50%]  text-center text-4xl font-bold  bg-clip-text text-transparent p-2' style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Meet your teacher</h2>
                 <p className='lg:w-[50%] text-gray-500 text-center'>Learn from an experienced educator dedicated to your success</p>
             </div>
-            <div className='m-auto p-2 flex flex-col lg:flex-row justify-center gap-4 '>
+            <div className='m-auto p-2 flex flex-col items-center lg:items-start lg:flex-row justify-center gap-4 '>
                 <div className='w-[200px] h-[200px] rounded-lg'>
                     <img src='https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop' className='object-cover rounded-lg w-full h-full' />
                 </div>
