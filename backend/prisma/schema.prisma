@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://neondb_owner:npg_c1grXtLTnO4s@ep-square-rice-a1c3tqmi-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+}
+
+model Student {
+  id         Int    @id @unique @default(autoincrement())
+  first_name String @db.VarChar(100)
+  last_name  String @db.VarChar(100)
+  email      String @unique @db.VarChar(100)
+  password   String @db.VarChar(200)
+  avatar     String @default("")
+  batchId    Int
+  batch      Batch  @relation(fields: [batchId], references: [id])
+}
+
+model Batch {
+  id         Int        @id @unique @default(autoincrement())
+  batch_name String     @db.VarChar(200)
+  duration   Int        @default(12)
+  students   Student[]
+  subjects   Subjects[]
+}
+
+model Subjects {
+  id           Int       @id @unique @default(autoincrement())
+  subject_name String    @db.VarChar(100)
+  batchId      Int
+  batch        Batch     @relation(fields: [batchId], references: [id])
+  contents     Content[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Content {
+  id           Int      @id @unique @default(autoincrement())
+  content_name String   @db.VarChar(200)
+  subjectId    Int
+  subject      Subjects @relation(fields: [subjectId], references: [id])
+  content_url  String
+  type         String
+  uploaded_on  DateTime @default(now())
+}
