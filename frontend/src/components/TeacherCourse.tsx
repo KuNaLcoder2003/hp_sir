@@ -77,7 +77,7 @@ const TeacherCourse = () => {
         type: "",
         content: []
     })
-    const [batch_name, setBatchName] = useState<string>("")
+    
     const [subjects, setSubjects] = useState<Subject[]>([])
     const [subjectContents, setSubjectContents] = useState<SubjectContents[]>([])
     const params = useLocation()
@@ -93,7 +93,7 @@ const TeacherCourse = () => {
             }).then(async (response: Response) => {
                 const data = await response.json()
                 if (data.batch_name) {
-                    setBatchName(data.batch_name)
+                    
                     setSubjects(data.subjects)
                     let arr = subject_contents_merge(data.subjects, data.content)
                     setSubjectContents(arr)
