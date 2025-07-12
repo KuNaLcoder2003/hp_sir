@@ -1,6 +1,7 @@
 import  {useState} from 'react'
 import {motion} from "framer-motion"
 import { FiX , FiMenu } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -8,10 +9,9 @@ const Navbar = () => {
         { content: 'Why us?'   },
         { content: 'Our Batches'  },
         { content: 'Pricing'  },
-        { content: 'Testimonials' },
+        { content: 'Student Login' },
     ]
-    
-
+    const navigate = useNavigate();
 
     return (
         <div className="rounded:sm w-[90%] rounded-xl lg:m-0 lg:w-full max-w-[1000px] mx-auto flex flex-wrap items-center lg:items-center justify-around lg:justify-around lg:rounded-full p-4 bg-white fixed top-4 left-1/2 transform -translate-x-1/2 shadow-lg z-50" >
@@ -30,7 +30,13 @@ const Navbar = () => {
                     data.map((data, index) => {
 
                         return (
-                            <p  className='text-gray-400 text-lg font-semibold hover:text-black transition-text duration-400 cursor-pointer' key={`${data.content}_${index}`}>{data.content}</p>
+                            <p onClick={()=> {
+                                if(index == 3) {
+                                    navigate('/signin')
+                                } else {
+                                    return
+                                }
+                            }} className='text-gray-400 text-lg font-semibold hover:text-black transition-text duration-400 cursor-pointer' key={`${data.content}_${index}`}>{data.content}</p>
                         )
                     })
                 }
