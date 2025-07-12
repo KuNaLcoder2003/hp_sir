@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState, type FormEvent } from 'react'
 import { BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -8,8 +8,8 @@ const Signin = () => {
         password : ""
     })
     const navigate = useNavigate()
-    function handleSubmit(e : any) {
-
+    function handleSubmit(e : FormEvent) {
+        e.preventDefault()
     } 
   return (
     <div className='p-4 '>
