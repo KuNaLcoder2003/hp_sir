@@ -77,6 +77,11 @@ const StudentNavbar: React.FC = () => {
                               >
                                   {data.map((item, index) => (
                                       <p 
+                                      onClick={()=>{
+                                        if(index == 1) {
+                                            navigate('/tests')
+                                        }
+                                      }}
                                           className="text-gray-500 text-base md:text-lg cursor-pointer hover:text-black transition-colors duration-300 cursor-pointer"
                                           key={`${item.content}_${index}`}
                                       >
