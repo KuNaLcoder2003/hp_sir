@@ -4,6 +4,7 @@ import { json } from "stream/consumers";
 const prisma = new PrismaClient()
 import multer from "multer"
 import { uploadOnCloud } from "../functions/cloudinary";
+import { generateToken } from "../functions/generateToken";
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const teacher_router = express.Router();
@@ -12,6 +13,33 @@ interface NewBatch {
     batch_name: string,
     duration: number
 }
+
+teacher_router.post('/signin' , async(req : express.Request , res : express.Response)=> {
+    try {
+        const {email , password} = req.body.adminCred;
+        if(!email || !password) {
+            res.status(400).json({
+                message : 'Bad requests'
+            })
+            return
+        }
+
+        const token  = generateToken(email , "admin")
+        if(!token) {
+            res.status(402).json({
+                message : 'Error logging in'
+            })
+            return
+        }
+        res.status(200).json({
+            token : token
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : 'Something went wrong'
+        })
+    }
+})
 
 teacher_router.get('/courses', async (req: express.Request, res: express.Response) => {
     try {
