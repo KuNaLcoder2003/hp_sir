@@ -1,8 +1,12 @@
-import  { useState, type FormEvent } from 'react'
+import  React, { useState, type FormEvent } from 'react'
 import { BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-const Signin = () => {
+interface Prop {
+    setIsLOggedIn : React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Signin : React.FC<Prop> = ({setIsLOggedIn}) => {
     const [cred , setCred] = useState({
         email : "",
         password : ""
@@ -10,6 +14,11 @@ const Signin = () => {
     const navigate = useNavigate()
     function handleSubmit(e : FormEvent) {
         e.preventDefault()
+        try {
+            
+        } catch (error) {
+            
+        }
     } 
   return (
     <div className='p-4 '>
@@ -38,7 +47,7 @@ const Signin = () => {
                     </div>
                     <div className='w-full p-1 flex flex-col'>
                         <button type="submit" className='bg-black text-white font-bold lg:w-[90%] p-1 rounded-lg'>Login</button>
-                        <p className='text-center'>New User? <span className='text-blue-500 underline cursor-pointer mt-4' onClick={() => navigate('/signup')}>Signup</span> </p>
+                        <p className='text-center'>New User? <span className='text-blue-500 underline cursor-pointer mt-4' onClick={() => navigate('/register')}>Signup</span> </p>
                     </div>
                 </form>
 

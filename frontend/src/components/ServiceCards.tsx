@@ -6,7 +6,7 @@ interface service {
     heading: string,
     name: string,
     subjects: string[],
-    duration: number,
+    duration?: number,
     mode: string
     feature: string[]
 }
@@ -89,7 +89,6 @@ const ServiceCards: React.FC<Prop> = ({serviveObj}) => {
                 </button>
             </div>
         </div>
-
     )
 }
 

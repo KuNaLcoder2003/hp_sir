@@ -8,6 +8,7 @@ interface Prop {
     content_name: string,
     uploaded_on: string,
     type: string,
+    url :  string
 }
 
 interface Subject {
@@ -45,9 +46,9 @@ interface SubjectContents {
     contents: cont[]
 
 }
-const ContentCard: React.FC<Prop> = ({ content_name, uploaded_on, type }) => {
+const ContentCard: React.FC<Prop> = ({ content_name, uploaded_on, type , url }) => {
     return (
-        <div className='w-[300px] h-[100px] p-2 bg-stone-100 flex flex-col items-baseline rounded-lg shadow-lg'>
+        <div onClick={()=>window.open(`${url}` , '_blank')} className='w-[300px] h-[100px] p-2 bg-stone-100 flex flex-col items-baseline rounded-lg shadow-lg'>
             <h2 className='text-xl font-bold text-gray-500'>{content_name}</h2>
             <div className='flex w-full items-center gap-4'>
                 <p className='text-lg text-semibold'>{uploaded_on}</p>
@@ -142,6 +143,7 @@ const TeacherCourse = () => {
                 }
             }
         }
+        console.log(arr)
         return arr
     }
     function handleFile(e: any) {
@@ -277,7 +279,9 @@ const TeacherCourse = () => {
                                                     ...newContent,
                                                     content_name: e.target.value
                                                 })
-                                            }}
+                                                console.log(subjectUploadId)
+                                            }
+                                        }
                                             type="text"
                                             placeholder="Enter content name..."
                                             className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -333,7 +337,7 @@ const TeacherCourse = () => {
                     </div>
                 </div>
             </header>
-            <div className="w-[75%] mt-10 p-4 m-auto shadow-lg rounded-lg bg-white">
+            <div className="w-[75%] mt-10 p-4 m-auto shadow-lg rounded-lg bg-white mb-8">
                 <div className='flex flex-col gap-4 lg:flex-row items-center justify-between'>
                     <h1 className="text-3xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Class 10th Foundation Batch</h1>
                     <div className='flex items-center justify-end m-auto w-[100%] lg:w-[60%] gap-4'>
@@ -359,11 +363,11 @@ const TeacherCourse = () => {
                                         <h2 className="text-lg p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Current Content</h2>
                                         <div className='w-full flex flex-wrap gap-4 items-center'>
                                             {
-                                                subjectContents[index] ? subjectContents[index].contents.map(object => {
+                                                subjectContents.find(obj => obj.subject_id == subject.id)?.contents.map(object => {
                                                     return (
-                                                        <ContentCard content_name={object.content_name} type={'PDF'} uploaded_on={'12-07-2025'} />
+                                                        <ContentCard key={object.content_id} content_name={object.content_name} type={'PDF'} uploaded_on={'12-07-2025'} url={object.content_url} />
                                                     )
-                                                }) : (<div>No content yet</div>)
+                                                }) 
                                             }
                                         </div>
                                     </div>

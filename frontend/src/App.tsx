@@ -7,19 +7,30 @@ import StudentDashboard from './components/StudentDashboard'
 import Tests from './components/Tests'
 import TeacherDashboard from './components/TeacherDashboard'
 import TeacherCourse from './components/TeacherCourse'
+import StudentSignUp from './components/StudentSignUp'
+import { useEffect, useState } from 'react'
 
 
 
 function App() {
-
+  const [isLoggedIn , setIsLoggedIn] = useState<boolean>(false)
+  useEffect(()=> {
+    const token = localStorage.getItem('token')
+    if(token) {
+      setIsLoggedIn(true)
+    } else {
+      setIsLoggedIn(false)
+    }
+  },[])
   return (
     <Routes>
       <Route path='/' element={<LandingPage />} />
-      <Route path='/signin' element={<Signin />} />
-      <Route path='/dashboard' element={<StudentDashboard />} />
-      <Route path='/tests' element={<Tests />} />
-      <Route path='/teacher' element={<TeacherDashboard />} />
-      <Route path='/teacher/course/:id' element={<TeacherCourse/>} />
+      <Route path='/signin' element={<Signin setIsLOggedIn={setIsLoggedIn} />} />
+      <Route path='/dashboard' element={isLoggedIn ? <StudentDashboard /> : <LandingPage/> } />
+      <Route path='/tests' element={isLoggedIn ? <Tests /> : <LandingPage/>} />
+      <Route path='/teacher' element={isLoggedIn ? <TeacherDashboard /> : <LandingPage/>} />
+      <Route path='/teacher/course/:id' element={isLoggedIn ? <TeacherCourse/> : <LandingPage/>} />
+      <Route path='/register' element={<StudentSignUp/>} />
     </Routes>
   )
 }
