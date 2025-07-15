@@ -4,9 +4,9 @@ import { error } from "console"
 
 const cloud = cloudinary.v2
 cloud.config({
-    cloud_name : '',
-    api_key : '',
-    api_secret : ''
+    cloud_name : 'doyifognr',
+    api_key : '558719477873916',
+    api_secret : 'v8ZvCjyKR-CgQwVd9D8qEpBygxw'
 })
 
 interface CloudinaryResponse{
