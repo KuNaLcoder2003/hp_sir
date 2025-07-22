@@ -32,7 +32,7 @@ teacher_router.post('/signin' , async(req : express.Request , res : express.Resp
             return
         }
         res.status(200).json({
-            token : token
+            token : token,
         })
     } catch (error) {
         res.status(500).json({
