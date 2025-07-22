@@ -349,7 +349,7 @@ const TeacherCourse = () => {
                 </div>
                 <div className='flex flex-col gap-8 w-full mt-8'>
                     {
-                       subjects.length == 0 ? (<div className='flex items-center justify-center text-xl font-bold'>No subjects yet add one</div>) :  subjects.map((subject, index) => {
+                       subjects.length == 0 ? (<div className='flex items-center justify-center text-xl font-bold'>No subjects yet add one</div>) :  subjects.map((subject) => {
                             return (
                                 <div key={subject.id} className="w-full m-auto flex flex-col items-center justify-between">
                                     <div className='flex w-full justify-between items-center'>

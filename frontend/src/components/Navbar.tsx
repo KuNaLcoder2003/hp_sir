@@ -78,7 +78,7 @@ const Navbar = () => {
                             >
                                 {data.map((item, index) => (
                                     <p 
-                                        className="text-gray-500 text-base md:text-lg cursor-pointer hover:text-black transition-colors duration-300 cursor-pointer"
+                                        className="text-gray-500 text-base md:text-lg hover:text-black transition-colors duration-300 cursor-pointer"
                                         key={`${item.content}_${index}`}
                                     >
                                         {item.content}

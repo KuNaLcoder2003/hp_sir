@@ -1,15 +1,15 @@
 import React, { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, User2Icon, Clock } from 'lucide-react'
-import toast, { ToastBar, Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 
-interface Details {
-    first_name: string,
-    last_name: string,
-    email: string,
-    password: string,
-    avatar: File[],
-}
+// interface Details {
+//     first_name: string,
+//     last_name: string,
+//     email: string,
+//     password: string,
+//     avatar: File[],
+// }
 
 interface Subject {
     id: number,
@@ -43,7 +43,7 @@ interface Ids {
 }
 
 interface Course {
-    batchId: number,
+    batchId?: number,
     subjects: Ids[]
 }
 
@@ -55,8 +55,8 @@ interface Register {
     batch: Course
 }
 
-const Card: React.FC<Props> = ({ subjects, batch_id, batch_name, setSelectedBatchId, index }) => {
-    const navigate = useNavigate()
+const Card: React.FC<Props> = ({ subjects, batch_name, setSelectedBatchId, index }) => {
+    // const navigate = useNavigate()
     return (
         <div className='p-4 w-[95%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[45%] m-auto overflow-hidden shadow-xl rounded-lg'>
             <div className='p-2 flex flex-col items-baseline gap-4'>
