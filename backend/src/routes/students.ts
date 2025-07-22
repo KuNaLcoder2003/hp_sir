@@ -1,6 +1,8 @@
 import express from "express"
 import multer from "multer"
 import { PrismaClient } from "../../generated/prisma"
+import { generateToken } from "../functions/generateToken"
+import { studentMiddleWare } from "../middlewares/studentMiddleWare"
 const prisma = new PrismaClient()
 const memory = multer.memoryStorage()
 const upload = multer({ storage: memory })
@@ -18,14 +20,16 @@ interface BatchSubject {
 
 interface New_Registration {
     first_name: string,
-    last_name: string,  
+    last_name: string,
     email: string,
     password: string,
     batch: BatchSubject,
 }
 
-student_router.get('/batches/subjects', async (req: express.Request, res: express.Response) => {
+student_router.get('/batches/subjects', async (req: any, res: express.Response) => {
     try {
+
+
         const batches = await prisma.batch.findMany({})
         if (batches.length == 0) {
             res.status(404).json({
@@ -37,15 +41,73 @@ student_router.get('/batches/subjects', async (req: express.Request, res: expres
             return obj.id
         })
         const subjects = await prisma.subjects.findMany({
-            where : {
-                batchId : {
-                    in : ids
+            where: {
+                batchId: {
+                    in: ids
                 }
             }
         })
         res.status(200).json({
-            batches , 
+            batches,
             subjects
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+student_router.get('/details', studentMiddleWare, async (req: any, res: express.Response) => {
+    try {
+        const email = req.email
+        const student = await prisma.student.findFirst({
+            where: { email: email }
+        })
+        if (!student) {
+            res.status(404).json({
+                message: 'Student id not found'
+            })
+            return
+        }
+        const batch = await prisma.batch.findFirst({
+            where: { id: student.batchId }
+        })
+        if (!batch) {
+            res.status(402).json({
+                message: 'You are currenty not enrolled in any batch'
+            })
+            return
+        }
+        const subjects = await prisma.studentSubjects.findMany({
+            where: { studentEmail: email, batchId: batch.id }
+        })
+
+        const subs = await prisma.subjects.findMany({
+            where : {
+                id : {
+                    in : subjects.map(obj => {
+                        return obj.subjectId
+                    })
+                }
+            }
+        })
+
+        const ids = subjects.map(obj => {
+            return obj.subjectId
+        })
+        const content = await prisma.content.findMany({
+            where: {
+                subjectId: {
+                    in: ids
+                }
+            }
+        })
+        res.status(200).json({
+            content,
+            subs,
+            student,
+            batch
         })
     } catch (error) {
         console.log(error)
@@ -98,6 +160,42 @@ student_router.post('/register', async (req: express.Request, res: express.Respo
         res.status(200).json({
             message: 'Successfully registered',
             student: new_student
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+
+student_router.post('/signin', async (req: express.Request, res: express.Response) => {
+    const { email, password } = req.body.cred
+    try {
+        if (!email || !password) {
+            res.status(402).json({
+                message: 'Bad request'
+            })
+            return
+        }
+        const student = await prisma.student.findFirst({
+            where: { email: email, password: password }
+        })
+        if (!student) {
+            res.status(404).json({
+                message: 'Student doest not exists'
+            })
+            return
+        }
+        const token = generateToken(student.email, "student")
+        if (!token) {
+            res.status(402).json({
+                message: 'Error signing in'
+            })
+        }
+        res.status(200).json({
+            token: token,
+            message: 'Signed in succesfully'
         })
     } catch (error) {
         console.log(error)
