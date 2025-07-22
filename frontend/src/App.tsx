@@ -26,8 +26,8 @@ function App() {
     <Routes>
       <Route path='/' element={<LandingPage />} />
       <Route path='/signin' element={<Signin setIsLOggedIn={setIsLoggedIn} />} />
-      <Route path='/dashboard' element={isLoggedIn ? <StudentDashboard /> : <LandingPage/> } />
-      <Route path='/tests' element={isLoggedIn ? <Tests /> : <LandingPage/>} />
+      <Route path='/dashboard' element={ isLoggedIn ? <StudentDashboard setIsLoggedIn={setIsLoggedIn} /> : <Signin setIsLOggedIn={setIsLoggedIn} /> } />
+      <Route path='/tests' element={<Tests />  } />
       <Route path='/teacher' element={isLoggedIn ? <TeacherDashboard /> : <LandingPage/>} />
       <Route path='/teacher/course/:id' element={isLoggedIn ? <TeacherCourse/> : <LandingPage/>} />
       <Route path='/register' element={<StudentSignUp/>} />

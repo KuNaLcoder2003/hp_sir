@@ -1,7 +1,7 @@
 import  React, { useState, type FormEvent } from 'react'
 import { BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-
+import toast, { Toaster } from 'react-hot-toast'
 interface Prop {
     setIsLOggedIn : React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -15,13 +15,35 @@ const Signin : React.FC<Prop> = ({setIsLOggedIn}) => {
     function handleSubmit(e : FormEvent) {
         e.preventDefault()
         try {
-            
+            fetch('http://localhost:3000/api/v1/student/signin' , {
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json',
+                },
+                body : JSON.stringify({
+                    cred : {
+                        email : cred.email,
+                        password : cred.password
+                    }
+                })
+            }).then(async(response : Response)=> {
+                const data = await response.json()
+                if(data.token) {
+                    toast.success(data.message)
+                    setIsLOggedIn(true)
+                    navigate("/dashboard")
+                    localStorage.setItem('token' , `Bearer ${data.token}`)
+                } else {
+                    toast.error(data.message)
+                }
+            })
         } catch (error) {
-            
+            toast.error('Something went wrong')
         }
     } 
   return (
     <div className='p-4 '>
+        <Toaster/>
 
             <div className='max-w-7xl m-auto h-screen flex flex-col justify-center items-center gap-4'>
 
