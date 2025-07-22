@@ -10,17 +10,17 @@ interface Subject {
     updatedAt?: string
 }
 
-interface Batch {
-    id: number,
-    batch_name: string,
-    duration: number
-}
+// interface Batch {
+//     id: number,
+//     batch_name: string,
+//     duration: number
+// }
 
-interface Batches_Subjects {
-    batch_id: number,
-    batch_name: string,
-    subjects: Subject[]
-}
+// interface Batches_Subjects {
+//     batch_id: number,
+//     batch_name: string,
+//     subjects: Subject[]
+// }
 
 interface Prop {
     setIsLoggedIn : React.Dispatch<React.SetStateAction<boolean>>
@@ -31,41 +31,42 @@ const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
     const [batchName, setBatchName] = useState<string>("")
     const [studentName , setStudentName] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
-    const [courses_subjects, setcourses_subjects] = useState<Batches_Subjects[]>([])
+   
     const [courses, setCourses] = useState<Subject[]>([])
-    function merge_courses_subjects(batches: Batch[], subjects: Subject[]) {
-        let arr: Batches_Subjects[] = [];
-        for (let i = 0; i < batches.length; i++) {
-            let obj: Batches_Subjects
-            for (let j = 0; j < subjects.length; j++) {
-                if (batches[i].id == subjects[j].batchId) {
-                    const matched = arr.find(obj => obj.batch_id == batches[i].id)
-                    if (matched) {
-                        obj = {
-                            ...matched,
-                            subjects: [...matched.subjects, { subject_name: subjects[j].subject_name, id: subjects[j].id, batchId: batches[i].id }]
-                        }
-                        arr = arr.map((o) => {
-                            if (obj.batch_id == o.batch_id) {
-                                return obj
-                            } else {
-                                return o
-                            }
-                        })
-                    } else {
-                        obj = {
-                            batch_id: batches[i].id,
-                            batch_name: batches[i].batch_name,
-                            subjects: [{ subject_name: subjects[j].subject_name, id: subjects[j].id, batchId: batches[i].id }]
-                        }
-                        arr.push(obj)
-                    }
-                }
-            }
-        }
-        console.log(arr)
-        return arr;
-    }
+    //  const [courses_subjects, setcourses_subjects] = useState<Batches_Subjects[]>([])
+    // function merge_courses_subjects(batches: Batch[], subjects: Subject[]) {
+    //     let arr: Batches_Subjects[] = [];
+    //     for (let i = 0; i < batches.length; i++) {
+    //         let obj: Batches_Subjects
+    //         for (let j = 0; j < subjects.length; j++) {
+    //             if (batches[i].id == subjects[j].batchId) {
+    //                 const matched = arr.find(obj => obj.batch_id == batches[i].id)
+    //                 if (matched) {
+    //                     obj = {
+    //                         ...matched,
+    //                         subjects: [...matched.subjects, { subject_name: subjects[j].subject_name, id: subjects[j].id, batchId: batches[i].id }]
+    //                     }
+    //                     arr = arr.map((o) => {
+    //                         if (obj.batch_id == o.batch_id) {
+    //                             return obj
+    //                         } else {
+    //                             return o
+    //                         }
+    //                     })
+    //                 } else {
+    //                     obj = {
+    //                         batch_id: batches[i].id,
+    //                         batch_name: batches[i].batch_name,
+    //                         subjects: [{ subject_name: subjects[j].subject_name, id: subjects[j].id, batchId: batches[i].id }]
+    //                     }
+    //                     arr.push(obj)
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     console.log(arr)
+    //     return arr;
+    // }
     useEffect(() => {
         try {
             setLoading(true)
@@ -91,15 +92,7 @@ const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
             setLoading(false)
         }
     }, [])
-    const notes = [
-        "Class 10th Physics",
-        "Current and Electricity - 1",
-        "Current and Electricity - 2",
-        "Current and Electricity - 3",
-        "Magnetism - 1",
-        "Magnetism - 2",
-        "Magnetism - 3",
-    ];
+    
     return (
         <>
             {
@@ -114,7 +107,7 @@ const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
                                     
                                     {/* Subjects */}
                                     {
-                                        courses.map((obj , index)=> {
+                                        courses.map((obj)=> {
                                             return (
                                                 <div key={obj.id} className='w-[30%] p-2 text-center bg-gray-100 rounded-ld shadow-lg'>
                                                     <h2 className='text-2xl fornt-bold text-shadow-sky-950'>Subject : {obj.subject_name}</h2>
