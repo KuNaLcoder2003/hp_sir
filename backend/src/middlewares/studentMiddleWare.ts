@@ -8,6 +8,7 @@ interface TokenVerify {
 export function studentMiddleWare(req : any  , res : express.Response , next : express.NextFunction){
     try {
         const authToken = req.headers.authorization as string;
+        console.log(authToken)
         if(!authToken || !authToken.startsWith('Bearer ')) {
             res.status(401).json({
                 message : 'Invalid access'
@@ -15,7 +16,7 @@ export function studentMiddleWare(req : any  , res : express.Response , next : e
             return
         }
         const token = authToken.split('Bearer ')[1]
-        const verify = jsonwebtoken.verify(token , "") as TokenVerify
+        const verify = jsonwebtoken.verify(token , "ihqe802ue9") as TokenVerify
         if(!verify) {
             res.status(401).json({
                 message : 'Invalid'
