@@ -84,9 +84,9 @@ student_router.get('/details', studentMiddleWare, async (req: any, res: express.
         })
 
         const subs = await prisma.subjects.findMany({
-            where : {
-                id : {
-                    in : subjects.map(obj => {
+            where: {
+                id: {
+                    in: subjects.map(obj => {
                         return obj.subjectId
                     })
                 }
@@ -196,6 +196,39 @@ student_router.post('/signin', async (req: express.Request, res: express.Respons
         res.status(200).json({
             token: token,
             message: 'Signed in succesfully'
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+student_router.get('/subjectDetails/:id', studentMiddleWare, async (req: any, res: express.Response) => {
+    try {
+        const email = req.email
+        const student = await prisma.student.findFirst({
+            where : {email : email}
+        })
+        const id = req.params.id
+        const subject = await prisma.subjects.findFirst({
+            where: { id: Number(id) }
+        })
+        if (!subject) {
+            res.status(400).json({
+                message: 'No such subject exists'
+            })
+            return
+        }
+        const content = await prisma.content.findMany({
+            where: {
+                subjectId: subject.id
+            }
+        })
+        res.status(200).json({
+            student_name : `${student?.first_name} ${student?.last_name}`,
+            subject,
+            content
         })
     } catch (error) {
         console.log(error)
