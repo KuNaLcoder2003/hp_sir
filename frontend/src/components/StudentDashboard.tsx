@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import StudentNavbar from './StudentNavbar';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface Subject {
     id: number,
@@ -31,7 +32,7 @@ const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
     const [batchName, setBatchName] = useState<string>("")
     const [studentName , setStudentName] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
-   
+    const navigate = useNavigate()
     const [courses, setCourses] = useState<Subject[]>([])
     //  const [courses_subjects, setcourses_subjects] = useState<Batches_Subjects[]>([])
     // function merge_courses_subjects(batches: Batch[], subjects: Subject[]) {
@@ -111,7 +112,7 @@ const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
                                             return (
                                                 <div key={obj.id} className='w-[30%] p-2 text-center bg-gray-100 rounded-ld shadow-lg'>
                                                     <h2 className='text-2xl fornt-bold text-shadow-sky-950'>Subject : {obj.subject_name}</h2>
-                                                    <button className='mt-6 mb-6 cursor-pointer p-2 text-center w-[70%] m-auto bg-black text-white font-semibold rounded-lg'>View Content</button>
+                                                    <button onClick={()=>navigate(`/subject/${obj.id}`)} className='mt-6 mb-6 cursor-pointer p-2 text-center w-[70%] m-auto bg-black text-white font-semibold rounded-lg'>View Content</button>
                                                 </div>
                                             )
                                         })

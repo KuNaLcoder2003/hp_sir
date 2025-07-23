@@ -9,6 +9,7 @@ import TeacherDashboard from './components/TeacherDashboard'
 import TeacherCourse from './components/TeacherCourse'
 import StudentSignUp from './components/StudentSignUp'
 import { useEffect, useState } from 'react'
+import Subject from './components/Subject'
 
 
 
@@ -30,7 +31,8 @@ function App() {
       <Route path='/tests' element={<Tests />  } />
       <Route path='/teacher' element={isLoggedIn ? <TeacherDashboard /> : <LandingPage/>} />
       <Route path='/teacher/course/:id' element={isLoggedIn ? <TeacherCourse/> : <LandingPage/>} />
-      <Route path='/register' element={<StudentSignUp/>} />
+      <Route path='/register' element={<StudentSignUp />} />
+      <Route path='/subject/:id' element={isLoggedIn ? <Subject setIsLoggedIn={setIsLoggedIn}/> : <Signin setIsLOggedIn={setIsLoggedIn}/>} />
     </Routes>
   )
 }
