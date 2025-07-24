@@ -234,7 +234,7 @@ const StudentSignUp = () => {
         }
     }
     return (
-        <>
+        <div>
             {
                 selectedBatchId < 0 ? <div className='p-4 '>
 
@@ -272,7 +272,7 @@ const StudentSignUp = () => {
 
                 </div> : <>
                 <Toaster/>
-                    <div className='max-w-5xl mt-20 m-auto min-h-auto flex flex-col justify-center items-center gap-4 bg-gray-100 rounded-lg shadow-lg p-4'>
+                    <div className='max-w-5xl mt-20 m-auto min-h-auto flex flex-col justify-center items-center gap-4 bg-white rounded-lg shadow-lg p-4'>
                         <h2 className='text-2xl font-bold'>Selected Batch : {courses_subjects[selectedBatchId].batch_name}</h2>
 
                         <form onSubmit={(e)=>handleSubmit(e)} className='flex flex-col p-4 w-full gap-4 rounded-lg'>
@@ -280,12 +280,12 @@ const StudentSignUp = () => {
                                 <h2 className='text-lg font-bold text-center'>Select Subjects</h2>
                             </div>
                             {
-                                courses_subjects[selectedBatchId] ? <div className='flex flex-col gap-2 items-center'>
+                                courses_subjects[selectedBatchId] ? <div className='flex flex-col gap-2'>
                                     {
                                         courses_subjects[selectedBatchId].subjects.map((obj) => {
                                             return (
                                                 <div className='flex items-center gap-4 p-4'>
-                                                    <p className='text-xl font-semibold'>{obj.subject_name}</p>
+                                                    <p className='text-xl lg:text-2xl font-semibold'>{obj.subject_name}</p>
                                                     <div onClick={() => {
                                                         setDetails({
                                                             ...details , 
@@ -313,11 +313,12 @@ const StudentSignUp = () => {
                                             return obj.id
                                         }))
                                     }} className='flex items-center gap-4 p-4'>
-                                        <p className='text-xl font-semibold'>Both</p>
+                                        <p className='text-xl lg:text-2xl font-semibold'>Both</p>
                                         <div className='p-[0.02rem] cursor-pointer bg-blue-500 text-lg text-white text-center w-[100px] font-bold rounded-lg'>Select</div>
                                     </div>
                                     {
-                                        selecetdSubjects.length == 0 ? null : (<>
+                                        selecetdSubjects.length == 0 ? null : (<div className='w-[90%] m-auto bg-white rounded-lg lg:w-[70%] flex flex-col items-center gap-4 p-4'>
+                                            <h3 className='text-xl lg:text-3xl font-bold bg-clip-text text-transparent' style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Fill Your Details</h3>
                                             <div className='w-full p-1 flex flex-col'>
                                                 <p className='text-md font-bold'>First Name : </p>
                                                 <input placeholder='enter your email...' className='border border-gray-300 lg:w-[90%] p-1 rounded-lg' value={details?.first_name} onChange={(e) => setDetails({ ...details, first_name: e.target.value })} />
@@ -336,7 +337,7 @@ const StudentSignUp = () => {
                                             </div>
                                             <div className='w-full p-1 flex flex-col'>
                                                 <button type="submit" className='bg-black text-white font-bold lg:w-[90%] p-1 rounded-lg'>Login</button>
-                                            </div></>)
+                                            </div></div>)
                                     }
                                 </div> : <div>No subjects yet</div>
                             }
@@ -344,7 +345,7 @@ const StudentSignUp = () => {
                     </div>
                 </>
             }
-        </>
+        </div>
     )
 }
 export default StudentSignUp

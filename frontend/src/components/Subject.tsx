@@ -82,8 +82,6 @@ interface Content {
     url: string
 }
 
-
-
 const ContentCard: React.FC<Content> = ({ content_name, uploaded_on, type, url }) => {
     return (
         <div onClick={() => window.open(`${url}`, '_blank')} className='w-[300px] h-[100px] p-2 bg-stone-100 flex flex-col cursor-pointer items-baseline rounded-lg shadow-lg'>

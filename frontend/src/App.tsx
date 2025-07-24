@@ -11,7 +11,6 @@ import StudentSignUp from './components/StudentSignUp'
 import { useEffect, useState } from 'react'
 import Subject from './components/Subject'
 import {BasicExample} from "./components/Demo"
-import PopUpDemo from './components/Cursor'
 
 
 
@@ -35,7 +34,6 @@ function App() {
       <Route path='/teacher/course/:id' element={isLoggedIn ? <TeacherCourse/> : <LandingPage/>} />
       <Route path='/register' element={<StudentSignUp />} />
       <Route path='/demo' element={<BasicExample/>} />
-      <Route path='/popup' element={<PopUpDemo/>} />
       <Route path='/subject/:id' element={isLoggedIn ? <Subject setIsLoggedIn={setIsLoggedIn}/> : <Signin setIsLOggedIn={setIsLoggedIn}/>} />
     </Routes>
   )
