@@ -453,7 +453,7 @@ const Card: React.FC<Props> = ({ subjects, batch_name, setSelectedBatchId, index
                 {/* Button */}
                 <button
                     onClick={() => setSelectedBatchId(index)}
-                    className='w-full py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-semibold rounded-lg transition-colors duration-300'
+                    className='w-full cursor-pointer py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-semibold rounded-lg transition-colors duration-300'
                 >
                     Select Batch
                 </button>
@@ -467,6 +467,7 @@ const StudentSignUp = () => {
     const [batches, setBatches] = useState<Batch[]>([])
     const [selectedBatchId, setSelectedBatchId] = useState<number>(-1)
     const [selecetdSubjects, setSelectedSubjects] = useState<number[]>([])
+    const [loading, setloading] = useState<boolean>(false)
 
     function merge_courses_subjects(batches: Batch[], subjects: Subject[]) {
         let arr: Batches_Subjects[] = [];
@@ -497,6 +498,7 @@ const StudentSignUp = () => {
 
     useEffect(() => {
         try {
+            setloading(true)
             fetch('https://hp-sir.onrender.com/api/v1/student/batches/subjects', {
                 method: 'GET',
                 headers: {
@@ -512,8 +514,10 @@ const StudentSignUp = () => {
                     toast.error(data.message)
                 }
             })
+            setloading(false)
         } catch {
             toast.error('Something went wrong')
+            setloading(false)
         }
     }, [])
 
@@ -562,13 +566,15 @@ const StudentSignUp = () => {
 
                     <h2 className="text-center text-2xl font-bold text-gray-800 mb-8">Choose from Ongoing Batches</h2>
 
-                    <div className="flex flex-wrap gap-6 justify-center">
-                        {batches.map((obj, index) => (
-                            courses_subjects[index]
-                                ? <Card key={courses_subjects[index].batch_id} index={index} setSelectedBatchId={setSelectedBatchId} subjects={courses_subjects[index].subjects} batch_name={courses_subjects[index].batch_name} batch_id={courses_subjects[index].batch_id} />
-                                : <Card key={obj.id} index={index} setSelectedBatchId={setSelectedBatchId} subjects={[]} batch_name={obj.batch_name} batch_id={obj.id} />
-                        ))}
-                    </div>
+                    {
+                        loading ? <p className='text-xl text-center'>loading...</p> : <div className="flex flex-wrap gap-6 justify-center">
+                            {batches.map((obj, index) => (
+                                courses_subjects[index]
+                                    ? <Card key={courses_subjects[index].batch_id} index={index} setSelectedBatchId={setSelectedBatchId} subjects={courses_subjects[index].subjects} batch_name={courses_subjects[index].batch_name} batch_id={courses_subjects[index].batch_id} />
+                                    : <Card key={obj.id} index={index} setSelectedBatchId={setSelectedBatchId} subjects={[]} batch_name={obj.batch_name} batch_id={obj.id} />
+                            ))}
+                        </div>
+                    }
                 </div>
             ) : (
                 <>
@@ -618,6 +624,28 @@ const StudentSignUp = () => {
 
                             {selecetdSubjects.length > 0 && (
                                 <div className="space-y-4">
+                                    <div className='w-full p-2 flex flex-col items-baseline'>
+                                        <h3 className='font-semibold mb-1'>Selected Subjects:</h3>
+                                        <div className='flex flex-wrap gap-2'>
+                                            {selecetdSubjects.length > 0 ? (
+                                                selecetdSubjects.map((courseId) => {
+                                                    const sub = courses_subjects?.[selectedBatchId]?.subjects?.find(
+                                                        (subject) => subject.id === courseId
+                                                    );
+                                                    return (
+                                                        <span
+                                                            key={courseId}
+                                                            className='bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm shadow-sm'
+                                                        >
+                                                            {sub?.subject_name || 'Unknown Subject'}
+                                                        </span>
+                                                    );
+                                                })
+                                            ) : (
+                                                <p className='text-gray-500 italic'>No subjects selected</p>
+                                            )}
+                                        </div>
+                                    </div>
                                     <h3 className="text-lg font-bold text-indigo-700">Fill Your Details</h3>
                                     <input type="text" placeholder="First Name" value={details.first_name} onChange={(e) => setDetails({ ...details, first_name: e.target.value })} className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                                     <input type="text" placeholder="Last Name" value={details.last_name} onChange={(e) => setDetails({ ...details, last_name: e.target.value })} className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" />
