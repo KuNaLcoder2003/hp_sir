@@ -17,6 +17,8 @@ const multer_1 = __importDefault(require("multer"));
 const prisma_1 = require("../../generated/prisma");
 const generateToken_1 = require("../functions/generateToken");
 const studentMiddleWare_1 = require("../middlewares/studentMiddleWare");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const salts = 10;
 const prisma = new prisma_1.PrismaClient();
 const memory = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({ storage: memory });
@@ -133,12 +135,19 @@ student_router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0,
                 subjectId: obj.subjectId
             };
         });
+        const hashedPasswod = bcrypt_1.default.hashSync(password, salts);
+        if (!hashedPasswod) {
+            res.status(402).json({
+                message: 'Unable to create account'
+            });
+            return;
+        }
         const new_student = yield prisma.student.create({
             data: {
                 first_name: first_name,
                 last_name: last_name,
                 email: email,
-                password: password,
+                password: hashedPasswod,
                 avatar: "",
                 batchId: batch.batchId,
                 subjects: {
@@ -171,11 +180,18 @@ student_router.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, f
             return;
         }
         const student = yield prisma.student.findFirst({
-            where: { email: email, password: password }
+            where: { email: email }
         });
         if (!student) {
             res.status(404).json({
                 message: 'Student doest not exists'
+            });
+            return;
+        }
+        const matchedPasswod = bcrypt_1.default.compareSync(password, student.password);
+        if (!matchedPasswod) {
+            res.status(404).json({
+                message: 'Invalid Password'
             });
             return;
         }

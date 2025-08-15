@@ -3,6 +3,8 @@ import multer from "multer"
 import { PrismaClient } from "../../generated/prisma"
 import { generateToken } from "../functions/generateToken"
 import { studentMiddleWare } from "../middlewares/studentMiddleWare"
+import bcrypt from "bcrypt"
+const salts = 10;
 const prisma = new PrismaClient()
 const memory = multer.memoryStorage()
 const upload = multer({ storage: memory })
@@ -28,8 +30,6 @@ interface New_Registration {
 
 student_router.get('/batches/subjects', async (req: any, res: express.Response) => {
     try {
-
-
         const batches = await prisma.batch.findMany({})
         if (batches.length == 0) {
             res.status(404).json({
@@ -135,18 +135,26 @@ student_router.post('/register', async (req: express.Request, res: express.Respo
             })
             return
         }
+
         const entries = batch.subjects.map(obj => {
             return {
                 batchId: batch.batchId,
                 subjectId: obj.subjectId
             }
         })
+        const hashedPasswod = bcrypt.hashSync(password, salts);
+        if (!hashedPasswod) {
+            res.status(402).json({
+                message: 'Unable to create account'
+            })
+            return
+        }
         const new_student = await prisma.student.create({
             data: {
                 first_name: first_name,
                 last_name: last_name,
                 email: email,
-                password: password,
+                password: hashedPasswod,
                 avatar: "",
                 batchId: batch.batchId,
                 subjects: {
@@ -179,11 +187,18 @@ student_router.post('/signin', async (req: express.Request, res: express.Respons
             return
         }
         const student = await prisma.student.findFirst({
-            where: { email: email, password: password }
+            where: { email: email }
         })
         if (!student) {
             res.status(404).json({
                 message: 'Student doest not exists'
+            })
+            return
+        }
+        const matchedPasswod = bcrypt.compareSync(password, student.password)
+        if (!matchedPasswod) {
+            res.status(404).json({
+                message: 'Invalid Password'
             })
             return
         }
@@ -208,7 +223,7 @@ student_router.get('/subjectDetails/:id', studentMiddleWare, async (req: any, re
     try {
         const email = req.email
         const student = await prisma.student.findFirst({
-            where : {email : email}
+            where: { email: email }
         })
         const id = req.params.id
         const subject = await prisma.subjects.findFirst({
@@ -226,7 +241,7 @@ student_router.get('/subjectDetails/:id', studentMiddleWare, async (req: any, re
             }
         })
         res.status(200).json({
-            student_name : `${student?.first_name} ${student?.last_name}`,
+            student_name: `${student?.first_name} ${student?.last_name}`,
             subject,
             content
         })
