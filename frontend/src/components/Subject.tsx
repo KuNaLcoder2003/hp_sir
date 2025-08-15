@@ -8,12 +8,12 @@ interface Prop {
 }
 
 interface Content_Obj {
-    content_name :string,
+    content_name: string,
     content_url: string,
-    id : number
-    subjectId : number
-    type : string
-    uploaded_on : string
+    id: number
+    subjectId: number
+    type: string
+    uploaded_on: string
 }
 
 const Subject: React.FC<Prop> = ({ setIsLoggedIn }) => {
@@ -25,7 +25,7 @@ const Subject: React.FC<Prop> = ({ setIsLoggedIn }) => {
     useEffect(() => {
         const id = path.pathname.split('/')[2]
         try {
-            fetch('http://localhost:3000/api/v1/student/subjectDetails/' + id, {
+            fetch('https://hp-sir.onrender.com/api/v1/student/subjectDetails/' + id, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

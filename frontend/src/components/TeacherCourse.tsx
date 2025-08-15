@@ -8,7 +8,7 @@ interface Prop {
     content_name: string,
     uploaded_on: string,
     type: string,
-    url :  string
+    url: string
 }
 
 interface Subject {
@@ -46,9 +46,9 @@ interface SubjectContents {
     contents: cont[]
 
 }
-const ContentCard: React.FC<Prop> = ({ content_name, uploaded_on, type , url }) => {
+const ContentCard: React.FC<Prop> = ({ content_name, uploaded_on, type, url }) => {
     return (
-        <div onClick={()=>window.open(`${url}` , '_blank')} className='w-[300px] h-[100px] p-2 bg-stone-100 flex flex-col items-baseline rounded-lg shadow-lg'>
+        <div onClick={() => window.open(`${url}`, '_blank')} className='w-[300px] h-[100px] p-2 bg-stone-100 flex flex-col items-baseline rounded-lg shadow-lg'>
             <h2 className='text-xl font-bold text-gray-500'>{content_name}</h2>
             <div className='flex w-full items-center gap-4'>
                 <p className='text-lg text-semibold'>{uploaded_on}</p>
@@ -59,8 +59,8 @@ const ContentCard: React.FC<Prop> = ({ content_name, uploaded_on, type , url }) 
 }
 
 interface NewSubject {
-    subject_name : string,
-    duration : number
+    subject_name: string,
+    duration: number
 }
 
 const TeacherCourse = () => {
@@ -68,17 +68,17 @@ const TeacherCourse = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [uploadLoading, setUploadLoading] = useState<boolean>(false)
     const [subjectUploadId, setSubjectUploadId] = useState<number>(1)
-    const [addNewSubject , setAddNewSubject] = useState<boolean>(false)
-    const [newSubject , setNewSubject] = useState<NewSubject>({
-        subject_name : "",
-        duration : 0
+    const [addNewSubject, setAddNewSubject] = useState<boolean>(false)
+    const [newSubject, setNewSubject] = useState<NewSubject>({
+        subject_name: "",
+        duration: 0
     })
     const [newContent, setNewContent] = useState<newContent>({
         content_name: "",
         type: "",
         content: []
     })
-    
+
     const [subjects, setSubjects] = useState<Subject[]>([])
     const [subjectContents, setSubjectContents] = useState<SubjectContents[]>([])
     const params = useLocation()
@@ -86,7 +86,7 @@ const TeacherCourse = () => {
         const id = params.pathname.split('/')[3]
         try {
             setLoading(true)
-            fetch('http://localhost:3000/api/v1/teacher/course/' + id, {
+            fetch('https://hp-sir.onrender.com/api/v1/teacher/course/' + id, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -94,7 +94,7 @@ const TeacherCourse = () => {
             }).then(async (response: Response) => {
                 const data = await response.json()
                 if (data.batch_name) {
-                    
+
                     setSubjects(data.subjects)
                     let arr = subject_contents_merge(data.subjects, data.content)
                     setSubjectContents(arr)
@@ -160,7 +160,7 @@ const TeacherCourse = () => {
             formData.append('content_name', newContent.content_name)
             formData.append('type', newContent.type)
             formData.append('content', newContent.content[0])
-            fetch('http://localhost:3000/api/v1/teacher/content/' + `${subjectUploadId}`, {
+            fetch('https://hp-sir.onrender.com/api/v1/teacher/content/' + `${subjectUploadId}`, {
                 method: 'POST',
                 body: formData
             }).then(async (response: Response) => {
@@ -179,29 +179,29 @@ const TeacherCourse = () => {
             toast.error("Something went wrong")
         }
     }
-    function handleAddNewSubject(e : FormEvent) {
+    function handleAddNewSubject(e: FormEvent) {
         e.preventDefault();
         const id = params.pathname.split('/')[3]
         console.log(id)
         try {
-            fetch('http://localhost:3000/api/v1/teacher/subject/' + id , {
-            method : 'POST' , 
-            headers : {
-                'Content-Type' : 'application/json',
-            },
-            body : JSON.stringify({
-                subject : newSubject.subject_name
+            fetch('https://hp-sir.onrender.com/api/v1/teacher/subject/' + id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    subject: newSubject.subject_name
+                })
+            }).then(async (response: Response) => {
+                const data = await response.json();
+                if (data.valid) {
+                    toast.success(data.message)
+                }
+                else {
+                    toast.error(data.message)
+                }
+
             })
-        }).then(async(response : Response)=> {
-            const data = await response.json();
-            if(data.valid) {
-                toast.success(data.message)
-            }
-            else {
-                toast.error(data.message)
-            }
-            
-        })
         } catch (error) {
             toast.error('Something went wrong')
         }
@@ -212,8 +212,8 @@ const TeacherCourse = () => {
             {
                 addNewSubject && (
                     <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
-                         <div className='rounded-lg shadow-md h-auto p-4 w-[30%] m-auto'>
-                              <form onSubmit={(e) => handleAddNewSubject(e)} className='flex flex-col p-4 bg-white w-full gap-4 rounded-lg'>
+                        <div className='rounded-lg shadow-md h-auto p-4 w-[30%] m-auto'>
+                            <form onSubmit={(e) => handleAddNewSubject(e)} className='flex flex-col p-4 bg-white w-full gap-4 rounded-lg'>
                                 <div className='flex w-full justify-between items-center'>
                                     <h2 className='text-lg font-bold'>Create new course </h2>
                                     <X onClick={() => setAddNewSubject(false)} className='cursor-pointer' />
@@ -225,8 +225,8 @@ const TeacherCourse = () => {
                                             value={newSubject.subject_name}
                                             onChange={(e) => {
                                                 setNewSubject({
-                                                    ...newSubject ,
-                                                    subject_name : e.target.value
+                                                    ...newSubject,
+                                                    subject_name: e.target.value
                                                 })
                                             }}
                                             type="text"
@@ -240,8 +240,8 @@ const TeacherCourse = () => {
                                             value={newSubject.duration}
                                             onChange={(e) => {
                                                 setNewSubject({
-                                                    ...newSubject , 
-                                                    duration : Number(e.target.value)
+                                                    ...newSubject,
+                                                    duration: Number(e.target.value)
                                                 })
                                             }}
                                             type="number"
@@ -252,7 +252,7 @@ const TeacherCourse = () => {
                                     <button type="submit" className='w-full bg-black text-white p-2 rounded-lg'>Add new Content</button>
                                 </div>
                             </form>
-                         </div>
+                        </div>
                     </div>
                 )
             }
@@ -281,7 +281,7 @@ const TeacherCourse = () => {
                                                 })
                                                 console.log(subjectUploadId)
                                             }
-                                        }
+                                            }
                                             type="text"
                                             placeholder="Enter content name..."
                                             className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -322,61 +322,61 @@ const TeacherCourse = () => {
                 loading ? <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                     Loading...
                 </div> : (<>
-                <header className="bg-white shadow-sm border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                                <BookOpen className="w-6 h-6 text-white" />
-                            </div>
-                            <h1 className="text-2xl font-bold text-gray-900">Welcome, Mr. Himanshu Parnami</h1>
-                        </div>
-                        <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </header>
-            <div className="w-[75%] mt-10 p-4 m-auto shadow-lg rounded-lg bg-white mb-8">
-                <div className='flex flex-col gap-4 lg:flex-row items-center justify-between'>
-                    <h1 className="text-3xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Class 10th Foundation Batch</h1>
-                    <div className='flex items-center justify-end m-auto w-[100%] lg:w-[60%] gap-4'>
-                        <button onClick={()=> {
-                            setAddNewSubject(true)
-                        }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Add Subject</button>
-                        <button className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
-                    </div>
-                </div>
-                <div className='flex flex-col gap-8 w-full mt-8'>
-                    {
-                       subjects.length == 0 ? (<div className='flex items-center justify-center text-xl font-bold'>No subjects yet add one</div>) :  subjects.map((subject) => {
-                            return (
-                                <div key={subject.id} className="w-full m-auto flex flex-col items-center justify-between">
-                                    <div className='flex w-full justify-between items-center'>
-                                        <h2 className="text-2xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{subject.subject_name}</h2>
-                                        <button onClick={() => {
-                                            setUploadScreen(true)
-                                            setSubjectUploadId(subject.id)
-                                        }} className="p-1 lg:p-2 w-[50%] lg:w-[20%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
+                    <header className="bg-white shadow-sm border-b border-gray-200">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center h-16">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                                        <BookOpen className="w-6 h-6 text-white" />
                                     </div>
-                                    <div className='flex flex-col w-full gap-2'>
-                                        <h2 className="text-lg p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Current Content</h2>
-                                        <div className='w-full flex flex-wrap gap-4 items-center'>
-                                            {
-                                                subjectContents.find(obj => obj.subject_id == subject.id)?.contents.map(object => {
-                                                    return (
-                                                        <ContentCard key={object.content_id} content_name={object.content_name} type={'PDF'} uploaded_on={'12-07-2025'} url={object.content_url} />
-                                                    )
-                                                }) 
-                                            }
-                                        </div>
-                                    </div>
+                                    <h1 className="text-2xl font-bold text-gray-900">Welcome, Mr. Himanshu Parnami</h1>
                                 </div>
-                            )
-                        })
-                    }
-                </div>
-            </div>
+                                <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+                    <div className="w-[75%] mt-10 p-4 m-auto shadow-lg rounded-lg bg-white mb-8">
+                        <div className='flex flex-col gap-4 lg:flex-row items-center justify-between'>
+                            <h1 className="text-3xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Class 10th Foundation Batch</h1>
+                            <div className='flex items-center justify-end m-auto w-[100%] lg:w-[60%] gap-4'>
+                                <button onClick={() => {
+                                    setAddNewSubject(true)
+                                }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Add Subject</button>
+                                <button className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
+                            </div>
+                        </div>
+                        <div className='flex flex-col gap-8 w-full mt-8'>
+                            {
+                                subjects.length == 0 ? (<div className='flex items-center justify-center text-xl font-bold'>No subjects yet add one</div>) : subjects.map((subject) => {
+                                    return (
+                                        <div key={subject.id} className="w-full m-auto flex flex-col items-center justify-between">
+                                            <div className='flex w-full justify-between items-center'>
+                                                <h2 className="text-2xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{subject.subject_name}</h2>
+                                                <button onClick={() => {
+                                                    setUploadScreen(true)
+                                                    setSubjectUploadId(subject.id)
+                                                }} className="p-1 lg:p-2 w-[50%] lg:w-[20%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
+                                            </div>
+                                            <div className='flex flex-col w-full gap-2'>
+                                                <h2 className="text-lg p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Current Content</h2>
+                                                <div className='w-full flex flex-wrap gap-4 items-center'>
+                                                    {
+                                                        subjectContents.find(obj => obj.subject_id == subject.id)?.contents.map(object => {
+                                                            return (
+                                                                <ContentCard key={object.content_id} content_name={object.content_name} type={'PDF'} uploaded_on={'12-07-2025'} url={object.content_url} />
+                                                            )
+                                                        })
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    </div>
                 </>)
             }
         </div>

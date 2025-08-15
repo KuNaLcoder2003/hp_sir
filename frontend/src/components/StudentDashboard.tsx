@@ -24,13 +24,13 @@ interface Subject {
 // }
 
 interface Prop {
-    setIsLoggedIn : React.Dispatch<React.SetStateAction<boolean>>
+    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
-const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
+const StudentDashboard: React.FC<Prop> = ({ setIsLoggedIn }) => {
     const [batchName, setBatchName] = useState<string>("")
-    const [studentName , setStudentName] = useState<string>("")
+    const [studentName, setStudentName] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
     const [courses, setCourses] = useState<Subject[]>([])
@@ -71,7 +71,7 @@ const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
     useEffect(() => {
         try {
             setLoading(true)
-            fetch('http://localhost:3000/api/v1/student/details/', {
+            fetch('https://hp-sir.onrender.com/api/v1/student/details/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
             setLoading(false)
         }
     }, [])
-    
+
     return (
         <>
             {
@@ -105,14 +105,14 @@ const StudentDashboard: React.FC<Prop> = ({setIsLoggedIn}) => {
                             <main className="max-w-6xl mx-auto p-6">
                                 <h2 className='text-3xl my-10 font-semibold'>Registered Subjects</h2>
                                 <div className='flex items-center justify-center gap-4 p-4'>
-                                    
+
                                     {/* Subjects */}
                                     {
-                                        courses.map((obj)=> {
+                                        courses.map((obj) => {
                                             return (
                                                 <div key={obj.id} className='w-[30%] p-2 text-center bg-gray-100 rounded-ld shadow-lg'>
                                                     <h2 className='text-2xl fornt-bold text-shadow-sky-950'>Subject : {obj.subject_name}</h2>
-                                                    <button onClick={()=>navigate(`/subject/${obj.id}`)} className='mt-6 mb-6 cursor-pointer p-2 text-center w-[70%] m-auto bg-black text-white font-semibold rounded-lg'>View Content</button>
+                                                    <button onClick={() => navigate(`/subject/${obj.id}`)} className='mt-6 mb-6 cursor-pointer p-2 text-center w-[70%] m-auto bg-black text-white font-semibold rounded-lg'>View Content</button>
                                                 </div>
                                             )
                                         })

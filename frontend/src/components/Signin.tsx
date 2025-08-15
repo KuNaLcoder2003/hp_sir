@@ -1,38 +1,38 @@
-import  React, { useState, type FormEvent } from 'react'
+import React, { useState, type FormEvent } from 'react'
 import { BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 interface Prop {
-    setIsLOggedIn : React.Dispatch<React.SetStateAction<boolean>>
+    setIsLOggedIn: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Signin : React.FC<Prop> = ({setIsLOggedIn}) => {
-    const [cred , setCred] = useState({
-        email : "",
-        password : ""
+const Signin: React.FC<Prop> = ({ setIsLOggedIn }) => {
+    const [cred, setCred] = useState({
+        email: "",
+        password: ""
     })
     const navigate = useNavigate()
-    function handleSubmit(e : FormEvent) {
+    function handleSubmit(e: FormEvent) {
         e.preventDefault()
         try {
-            fetch('http://localhost:3000/api/v1/student/signin' , {
-                method : 'POST',
-                headers : {
-                    'Content-Type' : 'application/json',
+            fetch('https://hp-sir.onrender.com/api/v1/student/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                body : JSON.stringify({
-                    cred : {
-                        email : cred.email,
-                        password : cred.password
+                body: JSON.stringify({
+                    cred: {
+                        email: cred.email,
+                        password: cred.password
                     }
                 })
-            }).then(async(response : Response)=> {
+            }).then(async (response: Response) => {
                 const data = await response.json()
-                if(data.token) {
+                if (data.token) {
                     toast.success(data.message)
                     setIsLOggedIn(true)
                     navigate("/dashboard")
-                    localStorage.setItem('token' , `Bearer ${data.token}`)
+                    localStorage.setItem('token', `Bearer ${data.token}`)
                 } else {
                     toast.error(data.message)
                 }
@@ -40,10 +40,10 @@ const Signin : React.FC<Prop> = ({setIsLOggedIn}) => {
         } catch (error) {
             toast.error('Something went wrong')
         }
-    } 
-  return (
-    <div className='p-4 '>
-        <Toaster/>
+    }
+    return (
+        <div className='p-4 '>
+            <Toaster />
 
             <div className='max-w-7xl m-auto h-screen flex flex-col justify-center items-center gap-4'>
 
@@ -57,7 +57,7 @@ const Signin : React.FC<Prop> = ({setIsLOggedIn}) => {
 
                 <h2 className='text-center text-3xl font-bold'>Enter Your credentials here</h2>
 
-                <form onSubmit={(e)=>handleSubmit(e)} className='flex flex-col justify-center items-center lg:w-[30%] gap-2 shadow-xl p-4 py-8 rounded-lg'>
+                <form onSubmit={(e) => handleSubmit(e)} className='flex flex-col justify-center items-center lg:w-[30%] gap-2 shadow-xl p-4 py-8 rounded-lg'>
 
                     <div className='w-full p-1 flex flex-col'>
                         <p className='text-md font-bold'>Email : </p>
@@ -76,7 +76,7 @@ const Signin : React.FC<Prop> = ({setIsLOggedIn}) => {
             </div>
 
         </div>
-  )
+    )
 }
 
 export default Signin

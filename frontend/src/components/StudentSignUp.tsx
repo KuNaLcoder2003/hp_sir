@@ -39,7 +39,7 @@ interface Batches_Subjects {
 }
 
 interface Ids {
-    subjectId : number
+    subjectId: number
 }
 
 interface Course {
@@ -171,7 +171,7 @@ const StudentSignUp = () => {
 
     useEffect(() => {
         try {
-            fetch('http://localhost:3000/api/v1/student/batches/subjects', {
+            fetch('https://hp-sir.onrender.com/api/v1/student/batches/subjects', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -208,21 +208,21 @@ const StudentSignUp = () => {
         e.preventDefault()
         console.log(details)
         try {
-            fetch('http://localhost:3000/api/v1/student/register' , {
-                method : 'POST',
-                headers : {
-                    'Content-Type' : 'application/json'
+            fetch('https://hp-sir.onrender.com/api/v1/student/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
                 },
-                body : JSON.stringify({
-                    first_name : details.first_name,
-                    last_name : details.last_name,
-                    email : details.email,
-                    password : details.password,
-                    batch : details.batch
+                body: JSON.stringify({
+                    first_name: details.first_name,
+                    last_name: details.last_name,
+                    email: details.email,
+                    password: details.password,
+                    batch: details.batch
                 })
-            }).then(async(response)=> {
+            }).then(async (response) => {
                 const data = await response.json();
-                if(data.student){
+                if (data.student) {
                     toast.success(data.message)
                     navigate('/signin')
                 } else {
@@ -271,11 +271,11 @@ const StudentSignUp = () => {
                     </div>
 
                 </div> : <>
-                <Toaster/>
+                    <Toaster />
                     <div className='max-w-5xl mt-20 m-auto min-h-auto flex flex-col justify-center items-center gap-4 bg-white rounded-lg shadow-lg p-4'>
                         <h2 className='text-2xl font-bold'>Selected Batch : {courses_subjects[selectedBatchId].batch_name}</h2>
 
-                        <form onSubmit={(e)=>handleSubmit(e)} className='flex flex-col p-4 w-full gap-4 rounded-lg'>
+                        <form onSubmit={(e) => handleSubmit(e)} className='flex flex-col p-4 w-full gap-4 rounded-lg'>
                             <div className='flex w-full justify-center items-center'>
                                 <h2 className='text-lg font-bold text-center'>Select Subjects</h2>
                             </div>
@@ -288,10 +288,10 @@ const StudentSignUp = () => {
                                                     <p className='text-xl lg:text-2xl font-semibold'>{obj.subject_name}</p>
                                                     <div onClick={() => {
                                                         setDetails({
-                                                            ...details , 
-                                                            batch : {
-                                                                batchId : obj.batchId,
-                                                                subjects : [...details.batch.subjects , {subjectId : obj.id}]
+                                                            ...details,
+                                                            batch: {
+                                                                batchId: obj.batchId,
+                                                                subjects: [...details.batch.subjects, { subjectId: obj.id }]
                                                             }
                                                         })
                                                         setSelectedSubjects([...selecetdSubjects, obj.id])
@@ -306,8 +306,9 @@ const StudentSignUp = () => {
                                             batch: {
                                                 batchId: courses_subjects[selectedBatchId].batch_id,
                                                 subjects: courses_subjects[selectedBatchId].subjects.map(obj => {
-                                                    return {subjectId : obj.id}
-                                            })}
+                                                    return { subjectId: obj.id }
+                                                })
+                                            }
                                         })
                                         setSelectedSubjects(courses_subjects[selectedBatchId].subjects.map(obj => {
                                             return obj.id

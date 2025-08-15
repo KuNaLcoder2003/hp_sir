@@ -25,23 +25,23 @@ interface Batches_Subjects {
 
 const TeacherDashboard = () => {
 
-  function addNewBatch(e : FormEvent) {
+  function addNewBatch(e: FormEvent) {
     e.preventDefault()
     try {
-      fetch('http://localhost:3000/api/v1/teacher/batch' , {
-        method : 'POST',
-        headers : {
-          'Content-Type' : 'application/json'
+      fetch('https://hp-sir.onrender.com/api/v1/teacher/batch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        body : JSON.stringify({
-          batch : {
-            batch_name : newBatch.batch_name,
-            duration : newBatch.duration
+        body: JSON.stringify({
+          batch: {
+            batch_name: newBatch.batch_name,
+            duration: newBatch.duration
           }
         })
-      }).then(async(response : Response)=> {
+      }).then(async (response: Response) => {
         const data = await response.json()
-        if(data.valid) {
+        if (data.valid) {
           toast.success(data.message)
           setIsopen(false)
         } else {
@@ -59,7 +59,7 @@ const TeacherDashboard = () => {
   })
 
   const [courses_subjects, setcourses_subjects] = useState<Batches_Subjects[]>([])
-  const [courses , setCourses] = useState<Batch[]>([]) 
+  const [courses, setCourses] = useState<Batch[]>([])
   function merge_courses_subjects(batches: Batch[], subjects: Subject[]) {
     let arr: Batches_Subjects[] = [];
     for (let i = 0; i < batches.length; i++) {
@@ -95,7 +95,7 @@ const TeacherDashboard = () => {
   }
   useEffect(() => {
     try {
-      fetch('http://localhost:3000/api/v1/teacher/courses', {
+      fetch('https://hp-sir.onrender.com/api/v1/teacher/courses', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -152,7 +152,7 @@ const TeacherDashboard = () => {
                     return (
                       <span key={`${subject}_${idx}`}>{subject.subject_name} , </span>
                     )
-                  }) 
+                  })
                 }
               </h2>
             </div>
@@ -195,7 +195,7 @@ const TeacherDashboard = () => {
         isOpen && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className='rounded-lg shadow-md h-auto p-4 w-[30%] m-auto'>
-              <form onSubmit={(e)=>addNewBatch(e)} className="flex flex-col p-4 bg-white w-full gap-4 rounded-lg">
+              <form onSubmit={(e) => addNewBatch(e)} className="flex flex-col p-4 bg-white w-full gap-4 rounded-lg">
                 <div className='flex w-full justify-between items-center'>
                   <h2 className='text-lg font-bold'>Create new course </h2>
                   <X onClick={() => setIsopen(false)} className='cursor-pointer' />
@@ -256,11 +256,11 @@ const TeacherDashboard = () => {
       <div className="w-[75%] mt-10 p-4 m-auto shadow-lg rounded-lg bg-white">
         <div className="max-w-full m-auto flex items-center justify-between">
           <h2 className="text-2xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Ongoing batches</h2>
-          <button onClick={()=>setIsopen(true)} className="p-2 w-[20%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Batch</button>
+          <button onClick={() => setIsopen(true)} className="p-2 w-[20%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Batch</button>
         </div>
         <div className="max-w-full m-auto mt-8 flex flex-col lg:flex-row lg:flex-wrap p-1">
           {
-            courses.map((obj , index) => {
+            courses.map((obj, index) => {
               return (
                 <>
                   {
