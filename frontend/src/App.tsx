@@ -10,31 +10,31 @@ import TeacherCourse from './components/TeacherCourse'
 import StudentSignUp from './components/StudentSignUp'
 import { useEffect, useState } from 'react'
 import Subject from './components/Subject'
-import {BasicExample} from "./components/Demo"
+import { BasicExample } from "./components/Demo"
 
 
 
 function App() {
-  const [isLoggedIn , setIsLoggedIn] = useState<boolean>(false)
-  useEffect(()=> {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+  useEffect(() => {
     const token = localStorage.getItem('token')
-    if(token) {
+    if (token) {
       setIsLoggedIn(true)
     } else {
       setIsLoggedIn(false)
     }
-  },[])
+  }, [])
   return (
     <Routes>
       <Route path='/' element={<LandingPage />} />
       <Route path='/signin' element={<Signin setIsLOggedIn={setIsLoggedIn} />} />
-      <Route path='/dashboard' element={ isLoggedIn ? <StudentDashboard setIsLoggedIn={setIsLoggedIn} /> : <Signin setIsLOggedIn={setIsLoggedIn} /> } />
-      <Route path='/tests' element={<Tests />  } />
-      <Route path='/teacher' element={isLoggedIn ? <TeacherDashboard /> : <LandingPage/>} />
-      <Route path='/teacher/course/:id' element={isLoggedIn ? <TeacherCourse/> : <LandingPage/>} />
+      <Route path='/dashboard' element={isLoggedIn ? <StudentDashboard setIsLoggedIn={setIsLoggedIn} /> : <Signin setIsLOggedIn={setIsLoggedIn} />} />
+      <Route path='/tests' element={<Tests />} />
+      <Route path='/teacher' element={<TeacherDashboard />} />
+      <Route path='/teacher/course/:id' element={<TeacherCourse />} />
       <Route path='/register' element={<StudentSignUp />} />
-      <Route path='/demo' element={<BasicExample/>} />
-      <Route path='/subject/:id' element={isLoggedIn ? <Subject setIsLoggedIn={setIsLoggedIn}/> : <Signin setIsLOggedIn={setIsLoggedIn}/>} />
+      <Route path='/demo' element={<BasicExample />} />
+      <Route path='/subject/:id' element={isLoggedIn ? <Subject setIsLoggedIn={setIsLoggedIn} /> : <Signin setIsLOggedIn={setIsLoggedIn} />} />
     </Routes>
   )
 }
