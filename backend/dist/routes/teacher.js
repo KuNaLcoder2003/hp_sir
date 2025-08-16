@@ -18,9 +18,11 @@ const prisma = new prisma_1.PrismaClient();
 const multer_1 = __importDefault(require("multer"));
 const cloudinary_1 = require("../functions/cloudinary");
 const generateToken_1 = require("../functions/generateToken");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({ storage: storage });
 const teacher_router = express_1.default.Router();
+const salts = 10;
 teacher_router.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body.adminCred;
@@ -29,6 +31,23 @@ teacher_router.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, f
                 message: 'Bad requests'
             });
             return;
+        }
+        const teacher = yield prisma.teacher.findFirst({
+            where: {
+                email: email
+            }
+        });
+        if (!teacher) {
+            res.status(404).json({
+                message: 'Account not found'
+            });
+            return;
+        }
+        const matched = bcrypt_1.default.compareSync(password, teacher.password);
+        if (!matched) {
+            res.status(401).json({
+                message: 'Wrong password'
+            });
         }
         const token = (0, generateToken_1.generateToken)(email, "admin");
         if (!token) {
@@ -39,6 +58,61 @@ teacher_router.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, f
         }
         res.status(200).json({
             token: token,
+            message: 'SignedIn',
+            role: "admin",
+            user: `${teacher.first_name} ${teacher.last_name}`
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
+teacher_router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { first_name, last_name, email, password } = req.body.teacherCred;
+        if (!first_name || !last_name || !email || !password) {
+            res.status(400).json({
+                message: 'Bad request'
+            });
+            return;
+        }
+        const teacher = yield prisma.teacher.findFirst({
+            where: {
+                email: email
+            }
+        });
+        if (teacher) {
+            res.status(402).json({
+                message: 'Account already exixts'
+            });
+            return;
+        }
+        const hashedPassword = bcrypt_1.default.hashSync(password, salts);
+        if (!hashedPassword) {
+            res.status(403).json({
+                message: 'Error creating account'
+            });
+            return;
+        }
+        const new_teacher = yield prisma.teacher.create({
+            data: {
+                first_name: first_name,
+                last_name: last_name,
+                email: email,
+                password: hashedPassword
+            }
+        });
+        if (!new_teacher) {
+            res.status(403).json({
+                message: 'Error creating account'
+            });
+            return;
+        }
+        res.status(200).json({
+            message: 'Successfully created',
+            valid: true
         });
     }
     catch (error) {
@@ -60,9 +134,11 @@ teacher_router.get('/courses', (req, res) => __awaiter(void 0, void 0, void 0, f
             return obj.id;
         });
         const subjects = yield prisma.subjects.findMany({
-            where: { batchId: {
+            where: {
+                batchId: {
                     in: ids
-                } }
+                }
+            }
         });
         res.status(200).json({
             courses: courses,

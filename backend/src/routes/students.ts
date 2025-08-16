@@ -210,6 +210,8 @@ student_router.post('/signin', async (req: express.Request, res: express.Respons
         }
         res.status(200).json({
             token: token,
+            role: "student",
+            user: `${student.first_name} ${student.last_name}`,
             message: 'Signed in succesfully'
         })
     } catch (error) {

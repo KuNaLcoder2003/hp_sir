@@ -203,6 +203,8 @@ student_router.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, f
         }
         res.status(200).json({
             token: token,
+            role: "student",
+            user: `${student.first_name} ${student.last_name}`,
             message: 'Signed in succesfully'
         });
     }

@@ -1,42 +1,118 @@
 import express from "express"
 import { PrismaClient } from "../../generated/prisma";
-import { json } from "stream/consumers";
 const prisma = new PrismaClient()
 import multer from "multer"
 import { uploadOnCloud } from "../functions/cloudinary";
 import { generateToken } from "../functions/generateToken";
+import bcrypt from "bcrypt"
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const teacher_router = express.Router();
+const salts = 10;
 
 interface NewBatch {
     batch_name: string,
     duration: number
 }
 
-teacher_router.post('/signin' , async(req : express.Request , res : express.Response)=> {
+teacher_router.post('/signin', async (req: express.Request, res: express.Response) => {
     try {
-        const {email , password} = req.body.adminCred;
-        if(!email || !password) {
+        const { email, password } = req.body.adminCred;
+        if (!email || !password) {
             res.status(400).json({
-                message : 'Bad requests'
+                message: 'Bad requests'
+            })
+            return
+        }
+        const teacher = await prisma.teacher.findFirst({
+            where: {
+                email: email
+            }
+        })
+
+        if (!teacher) {
+            res.status(404).json({
+                message: 'Account not found'
             })
             return
         }
 
-        const token  = generateToken(email , "admin")
-        if(!token) {
+        const matched = bcrypt.compareSync(password, teacher.password)
+
+        if (!matched) {
+            res.status(401).json({
+                message: 'Wrong password'
+            })
+        }
+
+        const token = generateToken(email, "admin")
+        if (!token) {
             res.status(402).json({
-                message : 'Error logging in'
+                message: 'Error logging in'
             })
             return
         }
         res.status(200).json({
-            token : token,
+            token: token,
+            message: 'SignedIn',
+            role: "admin",
+            user: `${teacher.first_name} ${teacher.last_name}`
         })
     } catch (error) {
         res.status(500).json({
-            message : 'Something went wrong'
+            message: 'Something went wrong'
+        })
+    }
+})
+
+teacher_router.post('/signup', async (req: express.Request, res: express.Response) => {
+    try {
+        const { first_name, last_name, email, password } = req.body.teacherCred
+        if (!first_name || !last_name || !email || !password) {
+            res.status(400).json({
+                message: 'Bad request'
+            })
+            return
+        }
+        const teacher = await prisma.teacher.findFirst({
+            where: {
+                email: email
+            }
+        })
+        if (teacher) {
+            res.status(402).json({
+                message: 'Account already exixts'
+            })
+            return
+        }
+        const hashedPassword = bcrypt.hashSync(password, salts)
+        if (!hashedPassword) {
+            res.status(403).json({
+                message: 'Error creating account'
+            })
+            return
+        }
+        const new_teacher = await prisma.teacher.create({
+            data: {
+                first_name: first_name,
+                last_name: last_name,
+                email: email,
+                password: hashedPassword
+            }
+        })
+        if (!new_teacher) {
+            res.status(403).json({
+                message: 'Error creating account'
+            })
+            return
+        }
+        res.status(200).json({
+            message: 'Successfully created',
+            valid: true
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something went wrong'
         })
     }
 })
@@ -54,13 +130,15 @@ teacher_router.get('/courses', async (req: express.Request, res: express.Respons
             return obj.id
         })
         const subjects = await prisma.subjects.findMany({
-            where : {batchId : {
-                in : ids
-            }}
+            where: {
+                batchId: {
+                    in: ids
+                }
+            }
         })
         res.status(200).json({
-            courses : courses,
-            subjects : subjects
+            courses: courses,
+            subjects: subjects
         })
     } catch (error) {
         console.log(error)
