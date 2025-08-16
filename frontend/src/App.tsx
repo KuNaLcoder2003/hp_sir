@@ -11,6 +11,7 @@ import StudentSignUp from './components/StudentSignUp'
 import { useEffect, useState } from 'react'
 import Subject from './components/Subject'
 import { BasicExample } from "./components/Demo"
+import TeacherAuth from './components/TeacherAuth'
 
 
 
@@ -35,6 +36,7 @@ function App() {
       <Route path='/register' element={<StudentSignUp />} />
       <Route path='/demo' element={<BasicExample />} />
       <Route path='/subject/:id' element={isLoggedIn ? <Subject setIsLoggedIn={setIsLoggedIn} /> : <Signin setIsLOggedIn={setIsLoggedIn} />} />
+      <Route path='/teacher/auth' element={<TeacherAuth />} />
     </Routes>
   )
 }

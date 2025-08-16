@@ -65,6 +65,7 @@ interface NewSubject {
 
 const TeacherCourse = () => {
     const [uploadScreen, setUploadScreen] = useState<boolean>(false)
+    const [batchName, setBatchName] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
     const [uploadLoading, setUploadLoading] = useState<boolean>(false)
     const [subjectUploadId, setSubjectUploadId] = useState<number>(1)
@@ -94,7 +95,7 @@ const TeacherCourse = () => {
             }).then(async (response: Response) => {
                 const data = await response.json()
                 if (data.batch_name) {
-
+                    setBatchName(data.batch_name)
                     setSubjects(data.subjects)
                     let arr = subject_contents_merge(data.subjects, data.content)
                     setSubjectContents(arr)
@@ -339,7 +340,7 @@ const TeacherCourse = () => {
                     </header>
                     <div className="w-[75%] mt-10 p-4 m-auto shadow-lg rounded-lg bg-white mb-8">
                         <div className='flex flex-col gap-4 lg:flex-row items-center justify-between'>
-                            <h1 className="text-3xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Class 10th Foundation Batch</h1>
+                            <h1 className="text-3xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{batchName}</h1>
                             <div className='flex items-center justify-end m-auto w-[100%] lg:w-[60%] gap-4'>
                                 <button onClick={() => {
                                     setAddNewSubject(true)
