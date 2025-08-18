@@ -12,9 +12,9 @@ const Teacher = () => {
                     <img src='https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop' className='object-cover rounded-lg w-full h-full' />
                 </div>
 
-                <div className='flex flex-col gap-2 items-baseline w-[50%] rounded-lg'>
+                <div className='flex flex-col gap-2 items-baseline w-[90%] items-center lg:items-baseline lg:w-[50%] rounded-lg'>
                     <h2 className='text-2xl text-transparent font-bold bg-clip-text' style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Himanshu Parnami</h2>
-                    <p className='text-gray-500'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa libero, tempore possimus repellendus, magnam ullam dolor ducimus ipsa nesciunt nulla, beatae assumenda est? Provident sed magnam, natus expedita quidem placeat!</p>
+                    <p className='text-gray-500 text-center lg:text-left'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa libero, tempore possimus repellendus, magnam ullam dolor ducimus ipsa nesciunt nulla, beatae assumenda est? Provident sed magnam, natus expedita quidem placeat!</p>
                 </div>
 
             </div>
