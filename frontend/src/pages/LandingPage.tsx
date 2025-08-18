@@ -35,6 +35,12 @@ const LandingPage = () => {
         <div className='w-[80%] m-auto flex justify-center items-center'>
           <FlipLink href="#">Succeed</FlipLink>
         </div>
+        <div className='w-[80%] m-auto flex justify-center items-center'>
+          <FlipLink href="#">With</FlipLink>
+        </div>
+        <div className='w-[80%] m-auto flex justify-center items-center'>
+          <FlipLink href="#">Abhayasa</FlipLink>
+        </div>
       </div>
       <div className='w-screen mt-20 flex items-center justify-center'>
         <Footer />

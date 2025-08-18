@@ -10,58 +10,59 @@ interface FlipLinkProps {
 }
 
 const FlipLink: React.FC<FlipLinkProps> = ({ children, href }) => {
+    const letters = children.split("")
+    const gradient =
+        "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)"
+
     return (
         <motion.a
             initial="initial"
+            animate="initial"
             whileHover="hovered"
             target="_blank"
+            rel="noopener noreferrer"
             href={href}
-            className="relative m-auto block overflow-hidden whitespace-nowrap text-4xl font-semibold uppercase sm:text-7xl md:text-8xl "
-            style={{
-                lineHeight: 0.75,
-            }}
+            className="relative m-auto block overflow-hidden whitespace-nowrap font-semibold uppercase text-[clamp(2rem,8vw,6rem)]"
+            style={{ lineHeight: 0.75 }}
         >
+            {/* Top layer (slides up) */}
             <div>
-                {children.split("").map((l, i) => (
+                {letters.map((l, i) => (
                     <motion.span
+                        key={i}
                         variants={{
-                            initial: {
-                                y: 0,
-                            },
-                            hovered: {
-                                y: "-100%",
-                            },
+                            initial: { y: 0 },
+                            hovered: { y: "-100%" },
                         }}
                         transition={{
                             duration: DURATION,
                             ease: "easeInOut",
                             delay: STAGGER * i,
                         }}
-                        className="inline-block"
-                        key={i}
+                        className="inline-block bg-clip-text text-transparent"
+                        style={{ backgroundImage: gradient }}
                     >
                         {l}
                     </motion.span>
                 ))}
             </div>
+
+            {/* Bottom layer (slides in) */}
             <div className="absolute inset-0">
-                {children.split("").map((l, i) => (
+                {letters.map((l, i) => (
                     <motion.span
+                        key={i}
                         variants={{
-                            initial: {
-                                y: "100%",
-                            },
-                            hovered: {
-                                y: 0,
-                            },
+                            initial: { y: "100%" },
+                            hovered: { y: 0 },
                         }}
                         transition={{
                             duration: DURATION,
                             ease: "easeInOut",
                             delay: STAGGER * i,
                         }}
-                        className="inline-block"
-                        key={i}
+                        className="inline-block bg-clip-text text-transparent"
+                        style={{ backgroundImage: gradient }}
                     >
                         {l}
                     </motion.span>
