@@ -55,7 +55,12 @@ export const AuthProvider = ({ children, logInUrl }: Props) => {
             const response = await fetch(logInUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userCred),
+                body: JSON.stringify({
+                    cred: {
+                        email: userCred.email,
+                        password: userCred.password
+                    }
+                }),
             })
             const data = await response.json()
 

@@ -23,14 +23,11 @@ interface Subject {
 //     subjects: Subject[]
 // }
 
-interface Prop {
-    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
-}
 
 
-const StudentDashboard: React.FC<Prop> = ({ setIsLoggedIn }) => {
+
+const StudentDashboard: React.FC = ({ }) => {
     const [batchName, setBatchName] = useState<string>("")
-    const [studentName, setStudentName] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
     const [courses, setCourses] = useState<Subject[]>([])
@@ -81,7 +78,6 @@ const StudentDashboard: React.FC<Prop> = ({ setIsLoggedIn }) => {
                 const data = await response.json()
                 console.log(data)
                 if (data.student) {
-                    setStudentName(`${data.student.first_name} ${data.student.last_name}`)
                     setBatchName(data.batch.batch_name)
                     setCourses(data.subs)
                 } else {
@@ -99,7 +95,7 @@ const StudentDashboard: React.FC<Prop> = ({ setIsLoggedIn }) => {
             {
                 loading ? <div>Loading...</div> : (
                     <>
-                        <StudentNavbar name={studentName} setIsLoggedIn={setIsLoggedIn} />
+                        <StudentNavbar />
                         <div className='max-w-8xl m-auto p-4 relative min-h-[80vh]  text-center mt-46 shadow-xl rounded-lg'>
                             <h1 className='text-3xl font-bold bg-clip-text text-transparent ' style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{batchName}</h1>
                             <main className="max-w-6xl mx-auto p-6">

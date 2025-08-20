@@ -3,9 +3,7 @@ import toast from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
 import StudentNavbar from './StudentNavbar'
 
-interface Prop {
-    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
-}
+
 
 interface Content_Obj {
     content_name: string,
@@ -16,10 +14,9 @@ interface Content_Obj {
     uploaded_on: string
 }
 
-const Subject: React.FC<Prop> = ({ setIsLoggedIn }) => {
+const Subject: React.FC = ({ }) => {
     const path = useLocation()
     const [subject, setSubject] = useState<string>("")
-    const [studentName, setStudentName] = useState<string>("")
     const [content, setContent] = useState<Content_Obj[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     useEffect(() => {
@@ -36,7 +33,6 @@ const Subject: React.FC<Prop> = ({ setIsLoggedIn }) => {
                 console.log(data)
                 if (data.subject) {
                     setSubject(data.subject.subject_name)
-                    setStudentName(data.student_name)
                     setContent(data.content)
                 } else {
                     toast.error(data.message)
@@ -53,7 +49,7 @@ const Subject: React.FC<Prop> = ({ setIsLoggedIn }) => {
             {
                 loading ? <div>Loading...</div> : (
                     <div className='w-screen h-screen overflow-x-hidden p-4 bg-gray-100'>
-                        <StudentNavbar setIsLoggedIn={setIsLoggedIn} name={studentName} />
+                        <StudentNavbar />
                         <div className='w-[65%] rounded-lg mt-40 m-auto p-4 bg-white'>
                             <h1 className='text-2xl lg:text-3xl bg-clip-text text-transparent font-bold' style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{subject}</h1>
                             <div className='mt-2'>

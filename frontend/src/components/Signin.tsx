@@ -86,36 +86,21 @@ import React, { useState, type FormEvent } from 'react'
 import { BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
+import { useAuth } from '../context/authContext'
 
-interface Prop {
-    setIsLOggedIn: React.Dispatch<React.SetStateAction<boolean>>
-}
 
-const Signin: React.FC<Prop> = ({ setIsLOggedIn }) => {
+
+const Signin: React.FC = ({ }) => {
     const [cred, setCred] = useState({
         email: "",
         password: ""
     })
     const navigate = useNavigate()
-
+    const { login } = useAuth()
     function handleSubmit(e: FormEvent) {
         e.preventDefault()
         try {
-            fetch('https://hp-sir.onrender.com/api/v1/student/signin', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cred })
-            }).then(async (response: Response) => {
-                const data = await response.json()
-                if (data.token) {
-                    toast.success(data.message)
-                    setIsLOggedIn(true)
-                    navigate("/dashboard")
-                    localStorage.setItem('token', `Bearer ${data.token}`)
-                } else {
-                    toast.error(data.message)
-                }
-            })
+            login(cred)
         } catch {
             toast.error('Something went wrong')
         }

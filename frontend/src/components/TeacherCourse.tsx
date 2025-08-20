@@ -1,8 +1,8 @@
 import React, { useState, useEffect, type FormEvent } from 'react'
-import { BookOpen, X } from 'lucide-react'
+import { BookOpen, Brain, X } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
-
+import ReactMarkdown from "react-markdown";
 
 interface Prop {
     content_name: string,
@@ -66,6 +66,11 @@ interface NewSubject {
 const TeacherCourse = () => {
     const [uploadScreen, setUploadScreen] = useState<boolean>(false)
     const [batchName, setBatchName] = useState<string>("")
+    // const [selectedSubjectId, setSelectedSubjectId] = useState<number>(-1)
+    const [propmts, setPrompts] = useState<string[]>([])
+    const [responses, setResponses] = useState<string[]>([])
+    const [prompt, setPrompt] = useState<string>('')
+    const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(localStorage.getItem('aiScreen') ? true : false)
     const [loading, setLoading] = useState<boolean>(false)
     const [uploadLoading, setUploadLoading] = useState<boolean>(false)
     const [subjectUploadId, setSubjectUploadId] = useState<number>(1)
@@ -211,6 +216,69 @@ const TeacherCourse = () => {
         <div className='min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'>
             <Toaster />
             {
+                isAiModalOpen && (
+                    <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
+                        <div className='rounded-lg shadow-md h-[80%] p-4 w-[80%] m-auto'>
+                            <div className='w-full bg-white h-full rounded-lg flex flex-col gap-4 items-baseline p-2 justify-between'>
+                                <div className='w-full flex items-center justify-between'>
+                                    <h3 className='text-3xl font-bold text-pink-400'>Your AI assistant</h3>
+                                    <X className='cursor-pointer' onClick={() => {
+                                        setPrompt("")
+                                        setIsAiModalOpen(false)
+                                        localStorage.removeItem('aiScreen')
+                                    }} />
+                                </div>
+                                <div className='w-full h-full overflow-y-auto p-2 flex flex-col gap-8'>
+                                    <div className='self-start w-[80%]'>
+                                        {
+                                            propmts.length > 0 && propmts.map(prompt => {
+                                                return <p className='w-[90%]'>{prompt}</p>
+                                            })
+                                        }
+                                    </div>
+                                    <div className='self-end w-[80%]'>
+                                        {
+                                            responses.length > 0 && responses.map(response => {
+                                                return <p className='w-[90%]'>{
+                                                    <ReactMarkdown>
+                                                        {response}
+                                                    </ReactMarkdown>
+                                                }</p>
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                                <form onSubmit={(e) => {
+                                    e.preventDefault()
+                                    setPrompts([...propmts, prompt])
+
+                                    fetch('http://localhost:3000/api/v1/files/generate', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            batch_id: 'jfjf',
+                                            subject_id: 'jfjv',
+                                            prompt: 'Genearte me class 10th cbse carbon and compunds test'
+                                        })
+                                    }).then(async (response: Response) => {
+                                        const data = await response.json()
+                                        if (data.response) {
+                                            setResponses([...responses, data.response])
+                                        }
+                                    })
+                                }} className='w-full flex flex-col items-baseline p-2 gap-2'>
+                                    <input className='w-full p-1 border-2 border-gray-200 rounded-lg' placeholder='Type your prompt' value={prompt} onChange={(e) => {
+                                        setPrompt(e.target.value)
+                                    }} /><button type='submit' className='cursor-pointer w-[40%] m-auto p-1 bg-blue-600 text-white text-center font-bold rounded-lg'>Generate</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+            {
                 addNewSubject && (
                     <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
                         <div className='rounded-lg shadow-md h-auto p-4 w-[30%] m-auto'>
@@ -353,12 +421,19 @@ const TeacherCourse = () => {
                                 subjects.length == 0 ? (<div className='flex items-center justify-center text-xl font-bold'>No subjects yet add one</div>) : subjects.map((subject) => {
                                     return (
                                         <div key={subject.id} className="w-full m-auto flex flex-col items-center justify-between">
+
                                             <div className='flex w-full justify-between items-center'>
                                                 <h2 className="text-2xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{subject.subject_name}</h2>
-                                                <button onClick={() => {
-                                                    setUploadScreen(true)
-                                                    setSubjectUploadId(subject.id)
-                                                }} className="p-1 lg:p-2 w-[50%] lg:w-[20%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
+                                                <div className='flex items-center justify-between gap-4'>
+                                                    <button onClick={() => {
+                                                        setUploadScreen(true)
+                                                        setSubjectUploadId(subject.id)
+                                                    }} className="p-1 lg:p-2 w-[50%] lg:w-[90%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
+                                                    <Brain className='cursor-pointer' onClick={() => {
+                                                        setIsAiModalOpen(true)
+                                                        localStorage.setItem('aiScreen', 'true')
+                                                    }} />
+                                                </div>
                                             </div>
                                             <div className='flex flex-col w-full gap-2'>
                                                 <h2 className="text-lg p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Current Content</h2>

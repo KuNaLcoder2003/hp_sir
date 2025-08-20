@@ -2,15 +2,12 @@ import React, { useState } from 'react';
 import { FiX, FiMenu } from 'react-icons/fi';
 import { motion } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/authContext';
 
-interface Prop {
-    name?: string,
-    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
-}
 
-const StudentNavbar: React.FC<Prop> = ({ name, setIsLoggedIn }) => {
+const StudentNavbar: React.FC = ({ }) => {
     const navigate = useNavigate()
-
+    const { user, logout } = useAuth()
     const [isOpen, setIsOpen] = useState(false)
     const data = [
         { content: 'Notes' },
@@ -23,7 +20,7 @@ const StudentNavbar: React.FC<Prop> = ({ name, setIsLoggedIn }) => {
             <div className="flex md:justify-start lg:justify-center gap-2 self-center md:self-start lg:p-2">
 
                 <p style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }} className="text-lg font-bold bg-clip-text flex items-center justify-center text-transparent">
-                    Welcome back, {name}
+                    Welcome back, {user}
                 </p>
             </div>
 
@@ -95,9 +92,7 @@ const StudentNavbar: React.FC<Prop> = ({ name, setIsLoggedIn }) => {
 
                                 <button
                                     onClick={() => {
-                                        localStorage.removeItem('token')
-                                        setIsLoggedIn(false)
-                                        navigate('/')
+                                        logout()
                                     }}
                                     className="lg:hidden w-[90%] p-2  bg-gradient-to-b from-indigo-500 to-indigo-900 rounded-[47.86px] shadow-[0_130px_35px_rgba(79,70,229,0.01),0_75px_36px_rgba(79,70,229,0.03),0_42px_30px_rgba(79,70,229,0.08),0_18px_22px_rgba(79,70,229,0.14),0_4px_12px_rgba(79,70,229,0.16)] opacity-100 will-change-transform">
                                     <div className="p-2 font-bold text-lg text-center bg-[radial-gradient(35%_63%_at_50%_50%,_rgb(99,102,241)_0%,_rgb(67,56,202)_100%)] rounded-[54.69px] border-[1.37px] border-solid border-[rgba(255,255,255,0.04)] opacity-100 text-white">
@@ -112,9 +107,7 @@ const StudentNavbar: React.FC<Prop> = ({ name, setIsLoggedIn }) => {
                 </motion.div>)
             }
             <button onClick={() => {
-                localStorage.removeItem('token')
-                setIsLoggedIn(false)
-                navigate('/')
+                logout()
             }} className="hidden cursor-pointer lg:block w-[25%] p-1  bg-gradient-to-b from-indigo-500 to-indigo-900 rounded-[47.86px] shadow-[0_130px_35px_rgba(79,70,229,0.01),0_75px_36px_rgba(79,70,229,0.03),0_42px_30px_rgba(79,70,229,0.08),0_18px_22px_rgba(79,70,229,0.14),0_4px_12px_rgba(79,70,229,0.16)] opacity-100 will-change-transform">
                 <div className="p-1 font-bold text-lg text-center bg-[radial-gradient(35%_63%_at_50%_50%,_rgb(99,102,241)_0%,_rgb(67,56,202)_100%)] rounded-[54.69px] border-[1.37px] border-solid border-[rgba(255,255,255,0.04)] opacity-100 text-white">
                     Logout
