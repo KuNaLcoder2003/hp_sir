@@ -33,6 +33,7 @@ model Batch {
   students          Student[]
   subjects          Subjects[]
   students_subjects StudentSubjects[]
+  file Files[]
 }
 
 model Subjects {
@@ -44,6 +45,7 @@ model Subjects {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   students     StudentSubjects[]
+  file Files[]
 }
 
 model Content {
@@ -74,3 +76,14 @@ model Teacher {
   email     String             @unique @db.VarChar(100)
   password  String             @db.VarChar(200)
 }
+
+model Files {
+  id         Int               @id @unique @default(autoincrement())
+  file_name  String            @db.VarChar(200)
+  file_url   String            
+  batch_id   Int
+  batch      Batch  @relation(fields: [batch_id] , references: [id])
+  subject_id Int
+  subject Subjects @relation(fields: [subject_id] , references: [id])
+}
+
