@@ -1,6 +1,7 @@
 import Groq from "groq-sdk";
-
-const groq = new Groq({ apiKey: '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' })
+import dotenv from "dotenv"
+dotenv.config()
+const groq = new Groq({ apiKey: `${process.env.API_KEY}` })
 
 export async function generateAiBasedTest(prompt: string): Promise<string> {
     const completion = await groq.chat.completions.create({
