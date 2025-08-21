@@ -1,5 +1,5 @@
 import React, { useState, useEffect, type FormEvent } from 'react'
-import { BookOpen, Brain, X } from 'lucide-react'
+import { BookOpen, Brain, Eye, Loader, X } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
 import ReactMarkdown from "react-markdown";
@@ -67,6 +67,9 @@ const TeacherCourse = () => {
     const [uploadScreen, setUploadScreen] = useState<boolean>(false)
     const [batchName, setBatchName] = useState<string>("")
     // const [selectedSubjectId, setSelectedSubjectId] = useState<number>(-1)
+    const [students, setStudents] = useState<any[]>([])
+    const [studentModalOpen, setIsStudentModal] = useState<boolean>(false)
+    const [loadingStudent, setLoadingStudent] = useState<boolean>(false)
     const [propmts, setPrompts] = useState<string[]>([])
     const [responses, setResponses] = useState<string[]>([])
     const [prompt, setPrompt] = useState<string>('')
@@ -84,6 +87,26 @@ const TeacherCourse = () => {
         type: "",
         content: []
     })
+
+    async function fetchStudents(batchId: number, subjectId: number) {
+        try {
+            setLoadingStudent(true)
+
+            fetch('http://localhost:3000/api/v1/teacher/student/' + batchId + '/' + subjectId, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (response: Response) => {
+                const data = await response.json()
+                setStudents(data.students)
+            })
+            setLoadingStudent(false)
+        } catch (error) {
+            toast.error('Something went wrong')
+            setLoadingStudent(false)
+        }
+    }
 
     const [subjects, setSubjects] = useState<Subject[]>([])
     const [subjectContents, setSubjectContents] = useState<SubjectContents[]>([])
@@ -216,6 +239,42 @@ const TeacherCourse = () => {
         <div className='min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'>
             <Toaster />
             {
+                studentModalOpen && (
+                    <>
+                        {
+                            loadingStudent ? <Loader /> : (<div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
+                                <div className='rounded-lg shadow-md h-[80%] p-4 w-[80%] m-auto'>
+
+                                    <div className='flex flex-col item-baseline gap-4 bg-gray-200 w-full h-full p-4 rounded-lg'>
+                                        <div className='w-full flex justify-between items-center'>
+                                            <h3 className='text-2xl font-bold'>Students List</h3>
+                                            <X className='cursor-pointer' onClick={() => {
+                                                setIsStudentModal(false)
+
+                                            }} />
+                                        </div>
+                                        <div className='flex flex-col items-baseline gap-4'>
+                                            {
+                                                students.map((student) => {
+                                                    return (
+                                                        <div className='shadow-lg p-2 w-full bg-white rounded-lg'>
+                                                            <div className='flex items-center justify-between'>
+                                                                <p className='text-lg text-gray-500 truncate'>Eamil : {student.studentEmail}</p>
+                                                                <Eye className='cursor-pointer' />
+                                                            </div>
+
+                                                        </div>)
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>)
+                        }
+                    </>
+                )
+            }
+            {
                 isAiModalOpen && (
                     <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
                         <div className='rounded-lg shadow-md h-[80%] p-4 w-[80%] m-auto'>
@@ -260,7 +319,7 @@ const TeacherCourse = () => {
                                         body: JSON.stringify({
                                             batch_id: 'jfjf',
                                             subject_id: 'jfjv',
-                                            prompt: 'Genearte me class 10th cbse carbon and compunds test'
+                                            prompt: prompt
                                         })
                                     }).then(async (response: Response) => {
                                         const data = await response.json()
@@ -413,7 +472,6 @@ const TeacherCourse = () => {
                                 <button onClick={() => {
                                     setAddNewSubject(true)
                                 }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Add Subject</button>
-                                <button className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
                             </div>
                         </div>
                         <div className='flex flex-col gap-8 w-full mt-8'>
@@ -424,11 +482,15 @@ const TeacherCourse = () => {
 
                                             <div className='flex w-full justify-between items-center'>
                                                 <h2 className="text-2xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{subject.subject_name}</h2>
-                                                <div className='flex items-center justify-between gap-4'>
+                                                <div className='flex justify-end items-center gap-2 w-[60%]'>
+                                                    <button onClick={() => {
+                                                        setIsStudentModal(true)
+                                                        fetchStudents(subject.batchId, subject.id)
+                                                    }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
                                                     <button onClick={() => {
                                                         setUploadScreen(true)
                                                         setSubjectUploadId(subject.id)
-                                                    }} className="p-1 lg:p-2 w-[50%] lg:w-[90%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
+                                                    }} className="p-1 lg:p-2 w-[50%] lg:w-[30%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
                                                     <Brain className='cursor-pointer' onClick={() => {
                                                         setIsAiModalOpen(true)
                                                         localStorage.setItem('aiScreen', 'true')
