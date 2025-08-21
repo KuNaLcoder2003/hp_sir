@@ -92,7 +92,7 @@ const TeacherCourse = () => {
         try {
             setLoadingStudent(true)
 
-            fetch('http://localhost:3000/api/v1/teacher/student/' + batchId + '/' + subjectId, {
+            fetch('https://hp-sir.onrender.com/api/v1/teacher/student/' + batchId + '/' + subjectId, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -311,7 +311,7 @@ const TeacherCourse = () => {
                                     e.preventDefault()
                                     setPrompts([...propmts, prompt])
 
-                                    fetch('http://localhost:3000/api/v1/files/generate', {
+                                    fetch('https://hp-sir.onrender.com/api/v1/files/generate', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json'
