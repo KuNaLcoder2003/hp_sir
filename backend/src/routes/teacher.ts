@@ -15,6 +15,26 @@ interface NewBatch {
     duration: number
 }
 
+teacher_router.get('/student/:batchid/:subjectId', async (req: any, res: express.Response) => {
+    const batchId = req.params.batchid
+    const subjectId = req.params.subjectId
+    try {
+        const students = await prisma.studentSubjects.findMany({
+            where: {
+                batchId: Number(batchId),
+                subjectId: Number(subjectId)
+            }
+        })
+        res.status(200).json({
+            students: students
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+
 teacher_router.post('/signin', async (req: express.Request, res: express.Response) => {
     try {
         const { email, password } = req.body.adminCred;

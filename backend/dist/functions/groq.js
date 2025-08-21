@@ -14,7 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateAiBasedTest = generateAiBasedTest;
 const groq_sdk_1 = __importDefault(require("groq-sdk"));
-const groq = new groq_sdk_1.default({ apiKey: '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' });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const groq = new groq_sdk_1.default({ apiKey: `${process.env.API_KEY}` });
 function generateAiBasedTest(prompt) {
     return __awaiter(this, void 0, void 0, function* () {
         const completion = yield groq.chat.completions.create({

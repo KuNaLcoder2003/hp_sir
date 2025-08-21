@@ -23,6 +23,26 @@ const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({ storage: storage });
 const teacher_router = express_1.default.Router();
 const salts = 10;
+teacher_router.get('/student/:batchid/:subjectId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const batchId = req.params.batchid;
+    const subjectId = req.params.subjectId;
+    try {
+        const students = yield prisma.studentSubjects.findMany({
+            where: {
+                batchId: Number(batchId),
+                subjectId: Number(subjectId)
+            }
+        });
+        res.status(200).json({
+            students: students
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
 teacher_router.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body.adminCred;
