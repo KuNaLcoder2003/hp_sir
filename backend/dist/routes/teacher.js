@@ -205,6 +205,7 @@ teacher_router.delete('/student/:studentId', (req, res) => __awaiter(void 0, voi
             });
         }
         res.status(200).json({
+            valid: true,
             message: 'Student deleted'
         });
     }
