@@ -19,6 +19,8 @@ const Subject: React.FC = ({ }) => {
     const [subject, setSubject] = useState<string>("")
     const [content, setContent] = useState<Content_Obj[]>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [permitted, setIsPermitted] = useState<boolean>(false)
+    const [message, setMessage] = useState<string>("")
     useEffect(() => {
         const id = path.pathname.split('/')[2]
         try {
@@ -34,8 +36,13 @@ const Subject: React.FC = ({ }) => {
                 if (data.subject) {
                     setSubject(data.subject.subject_name)
                     setContent(data.content)
+                    setIsPermitted(true)
                 } else {
                     toast.error(data.message)
+                    if (!data.permitted) {
+                        setIsPermitted(false)
+                        setMessage(data.message)
+                    }
                 }
                 setLoading(false)
             })
@@ -48,7 +55,7 @@ const Subject: React.FC = ({ }) => {
         <>
             {
                 loading ? <div>Loading...</div> : (
-                    <div className='w-screen h-screen overflow-x-hidden p-4 bg-gray-100'>
+                    permitted ? <div className='w-screen h-screen overflow-x-hidden p-4 bg-gray-100'>
                         <StudentNavbar />
                         <div className='w-[65%] rounded-lg mt-40 m-auto p-4 bg-white'>
                             <h1 className='text-2xl lg:text-3xl bg-clip-text text-transparent font-bold' style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{subject}</h1>
@@ -65,6 +72,8 @@ const Subject: React.FC = ({ }) => {
                                 </div>
                             </div>
                         </div>
+                    </div> : <div className='text-2xl max-w-screen flex items-center justify-center'>
+                        {message}
                     </div>
                 )
             }

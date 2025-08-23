@@ -31,6 +31,8 @@ const StudentDashboard: React.FC = ({ }) => {
     const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
     const [courses, setCourses] = useState<Subject[]>([])
+    const [permitted, setIsPermitted] = useState<boolean>(false)
+    const [message, setMessage] = useState<string>("")
     //  const [courses_subjects, setcourses_subjects] = useState<Batches_Subjects[]>([])
     // function merge_courses_subjects(batches: Batch[], subjects: Subject[]) {
     //     let arr: Batches_Subjects[] = [];
@@ -80,8 +82,13 @@ const StudentDashboard: React.FC = ({ }) => {
                 if (data.student) {
                     setBatchName(data.batch.batch_name)
                     setCourses(data.subs)
+                    setIsPermitted(true)
                 } else {
                     toast.error('No student content found')
+                    if (!data.permitted) {
+                        setIsPermitted(false)
+                        setMessage(data.message)
+                    }
                 }
                 setLoading(false);
             })
@@ -96,51 +103,80 @@ const StudentDashboard: React.FC = ({ }) => {
                 loading ? <div>Loading...</div> : (
                     <>
                         <StudentNavbar />
-                        <div className='max-w-8xl m-auto p-4 relative min-h-[80vh]  text-center mt-46 shadow-xl rounded-lg'>
-                            <h1 className='text-3xl font-bold bg-clip-text text-transparent ' style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{batchName}</h1>
-                            <main className="max-w-6xl mx-auto p-6">
-                                <h2 className='text-3xl my-10 font-semibold'>Registered Subjects</h2>
-                                <div className='flex items-center justify-center gap-4 p-4'>
+                        {
+                            permitted ? <div className="max-w-7xl mx-auto p-8 relative min-h-[80vh] text-center mt-28 shadow-2xl rounded-2xl bg-white/90 backdrop-blur-md border border-gray-200">
+                                {/* Batch Name */}
+                                <h1
+                                    className="text-4xl font-extrabold bg-clip-text text-transparent mb-12"
+                                    style={{
+                                        backgroundImage:
+                                            "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)",
+                                    }}
+                                >
+                                    {batchName}
+                                </h1>
 
-                                    {/* Subjects */}
-                                    {
-                                        courses.map((obj) => {
-                                            return (
-                                                <div key={obj.id} className='w-[30%] p-2 text-center bg-gray-100 rounded-ld shadow-lg'>
-                                                    <h2 className='text-2xl fornt-bold text-shadow-sky-950'>Subject : {obj.subject_name}</h2>
-                                                    <button onClick={() => navigate(`/subject/${obj.id}`)} className='mt-6 mb-6 cursor-pointer p-2 text-center w-[70%] m-auto bg-black text-white font-semibold rounded-lg'>View Content</button>
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </div>
+                                <main className="max-w-6xl mx-auto">
+                                    {/* Section Title */}
+                                    <h2 className="text-3xl font-semibold mb-10 text-gray-800">
+                                        Registered Subjects
+                                    </h2>
 
-                                {/* Notes Grid
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-                                    {notes.map((note, index) => (
-                                        <div
-                                            key={index}
-                                            className="bg-white shadow-md p-4 rounded-xl flex flex-col justify-between"
-                                        >
-                                            <h2 className="font-semibold mb-4">{note}</h2>
-                                            <div className="flex justify-between items-center">
-
-                                                <img
-                                                    src="https://img.icons8.com/color/48/pdf-2.png"
-                                                    className="w-6 h-6"
-                                                    alt="PDF"
-                                                />
-                                                <img
-                                                    src="https://img.icons8.com/ios-filled/24/download--v1.png"
-                                                    className="w-5 h-5"
-                                                    alt="Download"
-                                                />
+                                    {/* Subjects Grid */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                        {courses.map((obj) => (
+                                            <div
+                                                key={obj.id}
+                                                className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1"
+                                            >
+                                                <h2 className="text-xl font-bold text-gray-800 mb-6">
+                                                    Subject:{" "}
+                                                    <span className="text-indigo-700">{obj.subject_name}</span>
+                                                </h2>
+                                                <button
+                                                    onClick={() => navigate(`/subject/${obj.id}`)}
+                                                    className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-700 hover:from-indigo-700 hover:to-blue-800 transition text-white font-semibold"
+                                                >
+                                                    View Content
+                                                </button>
                                             </div>
-                                        </div>
-                                    ))}
-                                </div> */}
-                            </main>
-                        </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Notes Grid (Optional) */}
+                                    {/* 
+    <h2 className="text-3xl font-semibold mt-16 mb-8 text-gray-800">
+      Notes
+    </h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {notes.map((note, index) => (
+        <div
+          key={index}
+          className="bg-white shadow-md p-6 rounded-xl flex flex-col justify-between hover:shadow-lg transition"
+        >
+          <h3 className="font-semibold mb-4">{note}</h3>
+          <div className="flex justify-between items-center">
+            <img
+              src="https://img.icons8.com/color/48/pdf-2.png"
+              className="w-6 h-6"
+              alt="PDF"
+            />
+            <img
+              src="https://img.icons8.com/ios-filled/24/download--v1.png"
+              className="w-5 h-5 cursor-pointer hover:opacity-70 transition"
+              alt="Download"
+            />
+          </div>
+        </div>
+      ))}
+    </div> 
+    */}
+                                </main>
+                            </div>
+                                : <div className='text-2xl max-w-screen h-screen flex items-center justify-center'>
+                                    {message}
+                                </div>
+                        }
                     </>
                 )
             }

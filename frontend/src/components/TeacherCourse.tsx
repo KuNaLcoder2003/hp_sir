@@ -1,5 +1,5 @@
 import React, { useState, useEffect, type FormEvent } from 'react'
-import { BookOpen, Brain, Eye, Loader, X } from 'lucide-react'
+import { BookOpen, Brain, Loader, X } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
 import ReactMarkdown from "react-markdown";
@@ -9,6 +9,11 @@ interface Prop {
     uploaded_on: string,
     type: string,
     url: string
+}
+
+interface AIChat {
+    role: string,
+    message: string,
 }
 
 interface Subject {
@@ -66,15 +71,15 @@ interface NewSubject {
 const TeacherCourse = () => {
     const [uploadScreen, setUploadScreen] = useState<boolean>(false)
     const [batchName, setBatchName] = useState<string>("")
-    // const [selectedSubjectId, setSelectedSubjectId] = useState<number>(-1)
+    const [selectedSubjectId, setSelectedSubjectId] = useState<number>(-1)
     const [students, setStudents] = useState<any[]>([])
     const [studentModalOpen, setIsStudentModal] = useState<boolean>(false)
     const [loadingStudent, setLoadingStudent] = useState<boolean>(false)
-    const [propmts, setPrompts] = useState<string[]>([])
-    const [responses, setResponses] = useState<string[]>([])
+    const [chat, setChat] = useState<AIChat[]>([])
     const [prompt, setPrompt] = useState<string>('')
     const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(localStorage.getItem('aiScreen') ? true : false)
     const [loading, setLoading] = useState<boolean>(false)
+    const [permitList, setPermitList] = useState<number[]>([])
     const [uploadLoading, setUploadLoading] = useState<boolean>(false)
     const [subjectUploadId, setSubjectUploadId] = useState<number>(1)
     const [addNewSubject, setAddNewSubject] = useState<boolean>(false)
@@ -112,6 +117,10 @@ const TeacherCourse = () => {
     const [subjectContents, setSubjectContents] = useState<SubjectContents[]>([])
     const params = useLocation()
     useEffect(() => {
+        fetch_subjects()
+    }, [])
+
+    function fetch_subjects() {
         const id = params.pathname.split('/')[3]
         try {
             setLoading(true)
@@ -136,7 +145,15 @@ const TeacherCourse = () => {
         } catch (error) {
             toast.error("Something went wrong")
         }
-    }, [])
+    }
+
+    function removeStudent(id: number) {
+        try {
+            console.log(id)
+        } catch (error) {
+
+        }
+    }
 
     function subject_contents_merge(subjects: Subject[], content: Content[]) {
         let arr: SubjectContents[] = [];
@@ -197,6 +214,7 @@ const TeacherCourse = () => {
                 if (data.new_content) {
                     setUploadScreen(false)
                     setUploadLoading(false)
+                    fetch_subjects()
                     toast.success(data.message)
                 } else {
                     setUploadLoading(false)
@@ -225,11 +243,40 @@ const TeacherCourse = () => {
                 const data = await response.json();
                 if (data.valid) {
                     toast.success(data.message)
+                    fetch_subjects()
                 }
                 else {
                     toast.error(data.message)
                 }
 
+            })
+        } catch (error) {
+            toast.error('Something went wrong')
+        }
+    }
+    function permitStudents(permitList: number[]) {
+        try {
+            const id = params.pathname.split('/')[3]
+            if (permitList.length == 0) {
+                toast.error('Please select students to permit')
+                return
+            }
+            fetch('https://hp-sir.onrender.com/api/v1/teacher/admit_students', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ids: permitList
+                })
+            }).then(async (response: Response) => {
+                const data = await response.json()
+                if (data.valid) {
+                    toast.success(data.message)
+                    fetchStudents(Number(id), selectedSubjectId)
+                } else {
+                    toast.error(data.message)
+                }
             })
         } catch (error) {
             toast.error('Something went wrong')
@@ -242,34 +289,73 @@ const TeacherCourse = () => {
                 studentModalOpen && (
                     <>
                         {
-                            loadingStudent ? <Loader /> : (<div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
-                                <div className='rounded-lg shadow-md h-[80%] p-4 w-[80%] m-auto'>
-
-                                    <div className='flex flex-col item-baseline gap-4 bg-gray-200 w-full h-full p-4 rounded-lg'>
-                                        <div className='w-full flex justify-between items-center'>
-                                            <h3 className='text-2xl font-bold'>Students List</h3>
-                                            <X className='cursor-pointer' onClick={() => {
-                                                setIsStudentModal(false)
-
-                                            }} />
-                                        </div>
-                                        <div className='flex flex-col items-baseline gap-4'>
-                                            {
-                                                students.map((student) => {
-                                                    return (
-                                                        <div className='shadow-lg p-2 w-full bg-white rounded-lg'>
-                                                            <div className='flex items-center justify-between'>
-                                                                <p className='text-lg text-gray-500 truncate'>Eamil : {student.studentEmail}</p>
-                                                                <Eye className='cursor-pointer' />
-                                                            </div>
-
-                                                        </div>)
-                                                })
-                                            }
-                                        </div>
+                            loadingStudent ? <Loader /> : (<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                                <div className="rounded-2xl h-[80%] w-[80%] m-auto bg-white/90 shadow-2xl border border-gray-300 overflow-hidden animate-scaleIn">
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+                                        <h3 className="text-2xl font-bold">Students List</h3>
+                                        <X
+                                            className="cursor-pointer hover:scale-110 transition"
+                                            onClick={() => {
+                                                setIsStudentModal(false);
+                                                setStudents([]);
+                                                setPermitList([]);
+                                            }}
+                                        />
                                     </div>
+
+                                    {/* Body */}
+                                    <div className="flex flex-col gap-4 p-6 h-[calc(100%-120px)] overflow-y-auto">
+                                        {students.map((student) => (
+                                            <div
+                                                key={student.id}
+                                                className="shadow-md p-4 w-full bg-white rounded-xl flex items-center justify-between hover:shadow-lg transition"
+                                            >
+                                                <p className="text-lg text-gray-700 truncate">
+                                                    <span className="font-semibold">Email:</span> {student.email}
+                                                </p>
+
+                                                {student.permitted ? (
+                                                    <button
+                                                        onClick={() => removeStudent(student.id)}
+                                                        className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 transition text-white font-semibold"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() =>
+                                                            setPermitList((prev) =>
+                                                                Array.from(new Set([...prev, student.id]))
+                                                            )
+                                                        }
+                                                        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white font-semibold"
+                                                    >
+                                                        Permit
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Footer */}
+                                    {permitList.length > 0 && (
+                                        <div className="px-6 py-4 bg-gray-100 border-t flex items-center justify-between">
+                                            <p className="text-lg font-semibold text-gray-700">
+                                                Total Students to permit:{" "}
+                                                <span className="text-blue-700">{permitList.length}</span>
+                                            </p>
+                                            <button
+                                                onClick={() => permitStudents(permitList)}
+                                                className="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 transition text-white font-semibold"
+                                            >
+                                                Permit All
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-                            </div>)
+                            </div>
+                            )
                         }
                     </>
                 )
@@ -288,28 +374,27 @@ const TeacherCourse = () => {
                                     }} />
                                 </div>
                                 <div className='w-full h-full overflow-y-auto p-2 flex flex-col gap-8'>
-                                    <div className='self-start w-[80%]'>
-                                        {
-                                            propmts.length > 0 && propmts.map(prompt => {
-                                                return <p className='w-[90%]'>{prompt}</p>
-                                            })
-                                        }
-                                    </div>
-                                    <div className='self-end w-[80%]'>
-                                        {
-                                            responses.length > 0 && responses.map(response => {
-                                                return <p className='w-[90%]'>{
+                                    {
+                                        chat.map((chat_obj) => {
+                                            return (
+                                                <div className={`w-[80%] ${chat_obj.role == 'User' ? 'self-start text-xl font-semibold' : 'self-end'}`}>
+
                                                     <ReactMarkdown>
-                                                        {response}
+                                                        {chat_obj.message}
                                                     </ReactMarkdown>
-                                                }</p>
-                                            })
-                                        }
-                                    </div>
+
+                                                </div>
+                                            )
+                                        })
+                                    }
                                 </div>
                                 <form onSubmit={(e) => {
                                     e.preventDefault()
-                                    setPrompts([...propmts, prompt])
+                                    setChat(prev => [...prev, {
+                                        role: 'User',
+                                        message: prompt
+                                    }])
+
 
                                     fetch('https://hp-sir.onrender.com/api/v1/files/generate', {
                                         method: 'POST',
@@ -324,7 +409,12 @@ const TeacherCourse = () => {
                                     }).then(async (response: Response) => {
                                         const data = await response.json()
                                         if (data.response) {
-                                            setResponses([...responses, data.response])
+
+                                            setChat(prev => [...prev, {
+                                                role: 'AI',
+                                                message: data.response
+                                            }])
+
                                         }
                                     })
                                 }} className='w-full flex flex-col items-baseline p-2 gap-2'>
@@ -486,6 +576,7 @@ const TeacherCourse = () => {
                                                     <button onClick={() => {
                                                         setIsStudentModal(true)
                                                         fetchStudents(subject.batchId, subject.id)
+                                                        setSelectedSubjectId(subject.id)
                                                     }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
                                                     <button onClick={() => {
                                                         setUploadScreen(true)

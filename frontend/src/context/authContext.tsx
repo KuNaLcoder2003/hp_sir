@@ -67,7 +67,7 @@ export const AuthProvider = ({ children, logInUrl }: Props) => {
             if (data.token) {
                 localStorage.setItem(TOKEN_KEY, `Bearer ${data.token}`)
                 localStorage.setItem(ROLE_KEY, data.role)
-                setUser(data.username || userCred.email) // fallback to email
+                setUser(data.user) // fallback to email
                 setIsLoggedIn(true)
                 setIsAdmin(data.role === "admin")
                 navigate("/dashboard")

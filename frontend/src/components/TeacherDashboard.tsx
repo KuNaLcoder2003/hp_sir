@@ -328,6 +328,7 @@ const TeacherDashboard = () => {
         const data = await response.json()
         if (data.valid) {
           toast.success(data.message)
+          fetch_batches()
           setIsopen(false)
         } else {
           toast.error(data.message)
@@ -342,16 +343,21 @@ const TeacherDashboard = () => {
     let arr: Batches_Subjects[] = [];
     for (let i = 0; i < batches.length; i++) {
       let obj: Batches_Subjects
+      console.log('Current batch in process : ', batches[i])
       for (let j = 0; j < subjects.length; j++) {
+        console.log(batches[i].batch_name, 'in inner loop')
         if (batches[i].id == subjects[j].batchId) {
+          console.log(batches[i].batch_name, 'passed if inside inner loop')
           const matched = arr.find(obj => obj.batch_id == batches[i].id)
           if (matched) {
+            console.log(batches[i].batch_name, 'passed if inside inner loop')
             obj = {
               ...matched,
               subjects: [...matched.subjects, { subject_name: subjects[j].subject_name, id: subjects[j].id, batchId: batches[i].id }]
             }
             arr = arr.map((o) => o.batch_id == obj.batch_id ? obj : o)
           } else {
+            console.log(batches[i].batch_name, 'passed if inside inner loop')
             obj = {
               batch_id: batches[i].id,
               batch_name: batches[i].batch_name,
@@ -360,19 +366,47 @@ const TeacherDashboard = () => {
             arr.push(obj)
           }
         }
+
       }
     }
-    return arr;
+    // Step 1: keep only arr items that match batches
+    const findAll = arr.filter(obj =>
+      batches.some(batch => batch.id === obj.batch_id)
+    )
+
+    // Step 2: find missing batches
+    const missingBatches = batches.filter(batch =>
+      !arr.some(obj => obj.batch_id === batch.id)
+    ).map(batch => ({
+      batch_id: batch.id,
+      batch_name: batch.batch_name,
+      subjects: []
+    }))
+
+    // Step 3: merge both
+    const finalResult = [...findAll, ...missingBatches]
+
+    console.log(finalResult)
+
+
+
+    console.log('FINAL RESULT : ', finalResult)
+    return finalResult;
   }
 
   useEffect(() => {
+    fetch_batches()
+  }, [])
+  function fetch_batches() {
     try {
       fetch('https://hp-sir.onrender.com/api/v1/teacher/courses')
         .then(async (response: Response) => {
           const data = await response.json()
           if (data.courses) {
             setCourses(data.courses)
+            console.log('data from api is  ', data)
             let arr = merge_courses_subjects(data.courses, data.subjects)
+            console.log('mereged everything : ', arr)
             setcourses_subjects(arr)
           } else {
             toast.error(data.message)
@@ -381,11 +415,13 @@ const TeacherDashboard = () => {
     } catch (error) {
       toast.error('Something went wrong')
     }
-  }, [])
+  }
 
-  // --- Card Component (UI enhanced only) ---
   const Card: React.FC<Batches_Subjects> = ({ subjects, batch_id, batch_name }) => {
     const navigate = useNavigate()
+    useEffect(() => {
+      console.log(batch_id, " ", batch_name, " ", subjects)
+    }, [])
     return (
       <div
         onClick={() => navigate(`/teacher/course/${batch_id}`)}
@@ -526,11 +562,12 @@ const TeacherDashboard = () => {
 
         {/* Cards */}
         <div className="mt-10 flex flex-col lg:flex-row lg:flex-wrap gap-6">
-          {courses.map((obj, index) => (
-            courses_subjects[index]
+          {courses_subjects.map((obj, index) => {
+            console.log(courses)
+            return (courses_subjects[index]
               ? <Card key={courses_subjects[index].batch_id} {...courses_subjects[index]} />
-              : <Card key={obj.id} subjects={[]} batch_name={obj.batch_name} batch_id={obj.id} />
-          ))}
+              : <Card key={obj.batch_id} subjects={[]} batch_name={obj.batch_name} batch_id={obj.batch_id} />)
+          })}
         </div>
       </div>
     </div>
