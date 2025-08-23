@@ -33,8 +33,18 @@ teacher_router.get('/student/:batchid/:subjectId', (req, res) => __awaiter(void 
                 subjectId: Number(subjectId)
             }
         });
+        const ids = students.map((student) => {
+            return student.studentEmail;
+        });
+        const students_array = yield prisma.student.findMany({
+            where: {
+                email: {
+                    in: ids
+                }
+            }
+        });
         res.status(200).json({
-            students: students
+            students: students_array
         });
     }
     catch (error) {
@@ -133,6 +143,65 @@ teacher_router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, f
         res.status(200).json({
             message: 'Successfully created',
             valid: true
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
+teacher_router.post('/admit_students', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const ids = req.body.ids;
+        if (ids.length == 0) {
+            res.status(400).json({
+                message: 'Bad request'
+            });
+            return;
+        }
+        const admittedStudents = yield prisma.student.updateMany({
+            where: {
+                id: {
+                    in: ids
+                }
+            },
+            data: {
+                permitted: true
+            }
+        });
+        if (!admittedStudents || admittedStudents.count == 0) {
+            res.status(402).json({
+                message: 'Error permitting students'
+            });
+            return;
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
+teacher_router.delete('/student/:studentId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.studentId;
+        if (!id) {
+            res.status(402).json({
+                message: 'Bad Request'
+            });
+            return;
+        }
+        const student_deleted = yield prisma.student.delete({
+            where: { id: Number(id) }
+        });
+        if (!student_deleted) {
+            res.status(403).json({
+                message: 'Error deleting studnet'
+            });
+        }
+        res.status(200).json({
+            message: 'Student deleted'
         });
     }
     catch (error) {

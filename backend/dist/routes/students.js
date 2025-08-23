@@ -75,6 +75,14 @@ student_router.get('/details', studentMiddleWare_1.studentMiddleWare, (req, res)
             });
             return;
         }
+        if (!(student === null || student === void 0 ? void 0 : student.permitted)) {
+            res.status(401).json({
+                permitted: false,
+                message: 'You are not permitted by the admin yet , please contact the admin',
+                batch_name: batch.batch_name
+            });
+            return;
+        }
         const subjects = yield prisma.studentSubjects.findMany({
             where: { studentEmail: email, batchId: batch.id }
         });
@@ -221,6 +229,13 @@ student_router.get('/subjectDetails/:id', studentMiddleWare_1.studentMiddleWare,
         const student = yield prisma.student.findFirst({
             where: { email: email }
         });
+        if (!(student === null || student === void 0 ? void 0 : student.permitted)) {
+            res.status(401).json({
+                permitted: false,
+                message: 'You are not permitted by the admin yet , please contact the admin'
+            });
+            return;
+        }
         const id = req.params.id;
         const subject = yield prisma.subjects.findFirst({
             where: { id: Number(id) }

@@ -73,9 +73,18 @@ student_router.get('/details', studentMiddleWare, async (req: any, res: express.
         const batch = await prisma.batch.findFirst({
             where: { id: student.batchId }
         })
+
         if (!batch) {
             res.status(402).json({
                 message: 'You are currenty not enrolled in any batch'
+            })
+            return
+        }
+        if (!student?.permitted) {
+            res.status(401).json({
+                permitted: false,
+                message: 'You are not permitted by the admin yet , please contact the admin',
+                batch_name: batch.batch_name
             })
             return
         }
@@ -227,6 +236,13 @@ student_router.get('/subjectDetails/:id', studentMiddleWare, async (req: any, re
         const student = await prisma.student.findFirst({
             where: { email: email }
         })
+        if (!student?.permitted) {
+            res.status(401).json({
+                permitted: false,
+                message: 'You are not permitted by the admin yet , please contact the admin'
+            })
+            return
+        }
         const id = req.params.id
         const subject = await prisma.subjects.findFirst({
             where: { id: Number(id) }
