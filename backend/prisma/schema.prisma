@@ -64,8 +64,8 @@ model StudentSubjects {
   subject      Subjects @relation(fields: [subjectId], references: [id])
   studentEmail String
   batchId      Int
-  batch        Batch    @relation(fields: [batchId], references: [id])
-  student      Student  @relation(fields: [studentEmail], references: [email])
+  batch        Batch    @relation(fields: [batchId], references: [id] , onDelete: Cascade)
+  student      Student  @relation(fields: [studentEmail], references: [email] , onDelete: Cascade)
 
   @@id([studentEmail, subjectId])
 }
