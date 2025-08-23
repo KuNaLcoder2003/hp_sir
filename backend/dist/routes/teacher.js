@@ -210,6 +210,7 @@ teacher_router.delete('/student/:studentId', (req, res) => __awaiter(void 0, voi
         });
     }
     catch (error) {
+        console.log(error);
         res.status(500).json({
             message: 'Something went wrong'
         });

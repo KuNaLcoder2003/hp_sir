@@ -207,6 +207,7 @@ teacher_router.delete('/student/:studentId', async (req: any, res: express.Respo
             message: 'Student deleted'
         })
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: 'Something went wrong'
         })
