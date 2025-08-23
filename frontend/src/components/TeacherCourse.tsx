@@ -147,11 +147,25 @@ const TeacherCourse = () => {
         }
     }
 
-    function removeStudent(id: number) {
+    function removeStudent(student_id: number) {
         try {
-            console.log(id)
+            const batch_id = params.pathname.split('/')[3]
+            fetch('https://hp-sir.onrender.com/api/v1/teacher/student/' + student_id, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (response: Response) => {
+                const data = await response.json()
+                if (data.valid) {
+                    toast.success(data.message)
+                    fetchStudents(Number(batch_id), student_id)
+                } else {
+                    toast.error(data.message)
+                }
+            })
         } catch (error) {
-
+            toast.error('Something went wrong')
         }
     }
 
