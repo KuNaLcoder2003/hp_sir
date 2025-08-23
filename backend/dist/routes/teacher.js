@@ -176,6 +176,10 @@ teacher_router.post('/admit_students', (req, res) => __awaiter(void 0, void 0, v
             });
             return;
         }
+        res.status(200).json({
+            message: 'Students permitted',
+            valid: true
+        });
     }
     catch (error) {
         res.status(500).json({

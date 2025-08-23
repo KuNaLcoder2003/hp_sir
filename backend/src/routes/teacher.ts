@@ -174,6 +174,10 @@ teacher_router.post('/admit_students', async (req: any, res: express.Response) =
             })
             return
         }
+        res.status(200).json({
+            message: 'Students permitted',
+            valid: true
+        })
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong'
