@@ -159,7 +159,7 @@ const TeacherCourse = () => {
                 const data = await response.json()
                 if (data.valid) {
                     toast.success(data.message)
-                    fetchStudents(Number(batch_id), student_id)
+                    fetchStudents(Number(batch_id), selectedSubjectId)
                 } else {
                     toast.error(data.message)
                 }
