@@ -71,6 +71,11 @@ interface NewSubject {
 const TeacherCourse = () => {
     const [uploadScreen, setUploadScreen] = useState<boolean>(false)
     const [batchName, setBatchName] = useState<string>("")
+    const [testDetails, setTestDetails] = useState({
+        name: "",
+        date: ""
+    })
+    const [addTestModal, setAddTestModal] = useState<boolean>(false)
     const [selectedSubjectId, setSelectedSubjectId] = useState<number>(-1)
     const [students, setStudents] = useState<any[]>([])
     const [studentModalOpen, setIsStudentModal] = useState<boolean>(false)
@@ -299,6 +304,53 @@ const TeacherCourse = () => {
     return (
         <div className='min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'>
             <Toaster />
+            {
+                addTestModal && (
+                    <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
+                        <div className='rounded-lg shadow-md h-auto p-4 w-[30%] m-auto'>
+                            <form onSubmit={(e) => handleAddNewSubject(e)} className='flex flex-col p-4 bg-white w-full gap-4 rounded-lg'>
+                                <div className='flex w-full justify-between items-center'>
+                                    <h2 className='text-lg font-bold'>Create new test </h2>
+                                    <X onClick={() => setAddTestModal(false)} className='cursor-pointer' />
+                                </div>
+                                <div className='flex flex-col gap-2 items-baseline w-full'>
+                                    <div className='w-full'>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Test Name</label>
+                                        <input
+                                            value={testDetails.name}
+                                            onChange={(e) => {
+                                                setTestDetails({
+                                                    ...testDetails,
+                                                    name: e.target.value
+                                                })
+                                            }}
+                                            type="text"
+                                            placeholder="Enter test name..."
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div className='w-full'>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                                        <input
+                                            value={testDetails.date}
+                                            onChange={(e) => {
+                                                setTestDetails({
+                                                    ...testDetails,
+                                                    date: e.target.value
+                                                })
+                                            }}
+                                            type="date"
+                                            placeholder="Enter date..."
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        />
+                                    </div>
+                                    <button type="submit" className='w-full bg-black text-white p-2 rounded-lg'>Add new Test</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )
+            }
             {
                 studentModalOpen && (
                     <>
@@ -572,7 +624,7 @@ const TeacherCourse = () => {
                     <div className="w-[75%] mt-10 p-4 m-auto shadow-lg rounded-lg bg-white mb-8">
                         <div className='flex flex-col gap-4 lg:flex-row items-center justify-between'>
                             <h1 className="text-3xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{batchName}</h1>
-                            <div className='flex items-center justify-end m-auto w-[100%] lg:w-[60%] gap-4'>
+                            <div className='flex items-center justify-end w-[100%] lg:w-[60%]'>
                                 <button onClick={() => {
                                     setAddNewSubject(true)
                                 }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Add Subject</button>
@@ -592,6 +644,11 @@ const TeacherCourse = () => {
                                                         fetchStudents(subject.batchId, subject.id)
                                                         setSelectedSubjectId(subject.id)
                                                     }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
+                                                    <button onClick={() => {
+                                                        setAddTestModal(true)
+
+                                                        setSelectedSubjectId(subject.id)
+                                                    }} className="p-2 w-[50%] lg:w-[30%] bg-green-500 text-white font-bold rounded-lg cursor-pointer">Add New Test</button>
                                                     <button onClick={() => {
                                                         setUploadScreen(true)
                                                         setSubjectUploadId(subject.id)
