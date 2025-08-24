@@ -25,6 +25,7 @@ model Student {
   permitted  Boolean           @default(false)
   batch      Batch             @relation(fields: [batchId], references: [id])
   subjects   StudentSubjects[]
+  results Results[]
 }
 
 model Batch {
@@ -35,6 +36,7 @@ model Batch {
   subjects          Subjects[]
   students_subjects StudentSubjects[]
   file Files[]
+  test Test[]
 }
 
 model Subjects {
@@ -47,6 +49,7 @@ model Subjects {
   updatedAt    DateTime          @updatedAt
   students     StudentSubjects[]
   file Files[]
+  test Test[]
 }
 
 model Content {
@@ -76,6 +79,27 @@ model Teacher {
   last_name String             @db.VarChar(200)
   email     String             @unique @db.VarChar(100)
   password  String             @db.VarChar(200)
+}
+
+model Test{
+  id         Int               @id @unique @default(autoincrement())
+  test_name String             @db.VarChar(200)
+  subject_id Int                
+  subject    Subjects @relation(fields: [subject_id ], references: [id] , onDelete: Cascade)
+  batch_id Int
+  batch Batch @relation(fields: [batch_id] , references: [id] , onDelete: Cascade)
+  date DateTime 
+  resuluts Results[]
+}
+
+model Results {
+  id         Int               @id @unique @default(autoincrement())
+  test_id Int @unique
+  tests Test @relation(fields: [test_id] , references: [id])
+  student_id Int
+  student Student @relation(fields: [student_id] , references: [id] , onDelete:  Cascade)
+  marks Int @default(0)
+  date DateTime 
 }
 
 model Files {
