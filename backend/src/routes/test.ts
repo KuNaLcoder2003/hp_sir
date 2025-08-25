@@ -94,6 +94,7 @@ test_router.post('/newTest', async (req: any, res: express.Response) => {
             valid: true
         })
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: 'Something went wrong'
         })
