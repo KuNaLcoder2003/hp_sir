@@ -8,6 +8,7 @@ interface Test {
     test_name: string,
     batch_id: number,
     subject_id: number,
+    date: Date
 }
 
 interface Result {
@@ -66,7 +67,7 @@ test_router.get('/details/:batchId', studentMiddleWare, async (req: any, res: ex
 
 test_router.post('/newTest', async (req: any, res: express.Response) => {
     try {
-        const { test_name, batch_id, subject_id } = req.body as Test
+        const { test_name, batch_id, subject_id, date } = req.body as Test
 
         if (!batch_id || !subject_id || test_name) {
             res.status(400).json({
@@ -79,7 +80,7 @@ test_router.post('/newTest', async (req: any, res: express.Response) => {
                 test_name: test_name,
                 batch_id: batch_id,
                 subject_id: subject_id,
-                date: new Date()
+                date: date
             }
         })
         if (!new_test) {
