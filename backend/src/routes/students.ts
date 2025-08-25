@@ -221,7 +221,8 @@ student_router.post('/signin', async (req: express.Request, res: express.Respons
             token: token,
             role: "student",
             user: `${student.first_name} ${student.last_name}`,
-            message: 'Signed in succesfully'
+            message: 'Signed in succesfully',
+            batch_id: student.batchId
         })
     } catch (error) {
         console.log(error)

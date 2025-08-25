@@ -16,7 +16,9 @@ interface Result {
     marks: number,
     date: Date
 }
-test_router.get('/details/:batchId/:subjectId', studentMiddleWare, async (req: any, res: express.Response) => {
+
+
+test_router.get('/details/:batchId', studentMiddleWare, async (req: any, res: express.Response) => {
     const batch_id = req.params.batchId
     const subject_id = req.params.subjectId
     try {
@@ -43,7 +45,7 @@ test_router.get('/details/:batchId/:subjectId', studentMiddleWare, async (req: a
             return
         }
         const test = await prisma.test.findMany({
-            where: { batch_id: batch.id, subject_id: subject.id }
+            where: { batch_id: batch.id }
         })
         const tests = test.map((test) => {
             return {

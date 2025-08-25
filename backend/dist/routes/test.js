@@ -17,7 +17,7 @@ const prisma_1 = require("../../generated/prisma");
 const studentMiddleWare_1 = require("../middlewares/studentMiddleWare");
 const prisma = new prisma_1.PrismaClient();
 const test_router = express_1.default.Router();
-test_router.get('/details/:batchId/:subjectId', studentMiddleWare_1.studentMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+test_router.get('/details/:batchId', studentMiddleWare_1.studentMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const batch_id = req.params.batchId;
     const subject_id = req.params.subjectId;
     try {
@@ -44,7 +44,7 @@ test_router.get('/details/:batchId/:subjectId', studentMiddleWare_1.studentMiddl
             return;
         }
         const test = yield prisma.test.findMany({
-            where: { batch_id: batch.id, subject_id: subject.id }
+            where: { batch_id: batch.id }
         });
         const tests = test.map((test) => {
             return {

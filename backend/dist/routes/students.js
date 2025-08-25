@@ -213,7 +213,8 @@ student_router.post('/signin', (req, res) => __awaiter(void 0, void 0, void 0, f
             token: token,
             role: "student",
             user: `${student.first_name} ${student.last_name}`,
-            message: 'Signed in succesfully'
+            message: 'Signed in succesfully',
+            batch_id: student.batchId
         });
     }
     catch (error) {
