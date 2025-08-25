@@ -66,7 +66,7 @@ test_router.get('/details/:batchId', studentMiddleWare_1.studentMiddleWare, (req
 test_router.post('/newTest', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { test_name, batch_id, subject_id, date } = req.body;
-        if (!batch_id || !subject_id || test_name) {
+        if (!batch_id || !subject_id || !test_name) {
             res.status(400).json({
                 message: 'Bad request'
             });

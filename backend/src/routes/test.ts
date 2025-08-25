@@ -69,7 +69,7 @@ test_router.post('/newTest', async (req: any, res: express.Response) => {
     try {
         const { test_name, batch_id, subject_id, date } = req.body as Test
 
-        if (!batch_id || !subject_id || test_name) {
+        if (!batch_id || !subject_id || !test_name) {
             res.status(400).json({
                 message: 'Bad request'
             })
