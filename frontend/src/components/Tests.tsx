@@ -22,7 +22,7 @@ export default function Tests() {
     const id = path.pathname.split("/")[2];
     try {
       setLoading(true);
-      fetch("http://localhost:3000/api/v1/test/details/" + id, {
+      fetch("https://hp-sir.onrender.com/api/v1/test/details/" + id, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

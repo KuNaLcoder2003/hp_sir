@@ -48,7 +48,7 @@ const TeacherTest: React.FC = () => {
         const subjectId = path.pathname.split("/")[4];
 
         fetch(
-            "http://localhost:3000/api/v1/test/details/" + batchId + "/" + subjectId,
+            "https://hp-sir.onrender.com/api/v1/test/details/" + batchId + "/" + subjectId,
             {
                 method: "GET",
                 headers: {
@@ -108,7 +108,7 @@ const TeacherTest: React.FC = () => {
     function fetch_results(testId: number) {
         setLoadingResults(true);
         try {
-            fetch("http://localhost:3000/api/v1/test/getResults/" + `${testId}`, {
+            fetch("https://hp-sir.onrender.com/api/v1/test/getResults/" + `${testId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -137,7 +137,7 @@ const TeacherTest: React.FC = () => {
             return
         }
         try {
-            fetch('http://localhost:3000/api/v1/test/updateResult/' + `${testId}`, {
+            fetch('https://hp-sir.onrender.com/api/v1/test/updateResult/' + `${testId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -204,7 +204,7 @@ const TeacherTest: React.FC = () => {
             return
         }
         try {
-            fetch('http://localhost:3000/api/v1/test/marks/' + `${testId}`, {
+            fetch('https://hp-sir.onrender.com/api/v1/test/marks/' + `${testId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

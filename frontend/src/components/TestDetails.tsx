@@ -32,7 +32,7 @@ export default function TestDetailsPage() {
   useEffect(() => {
     const testId = path.pathname.split('/')[2]
     setLoading(true)
-    fetch('http://localhost:3000/api/v1/test/getTestResult/' + testId, {
+    fetch('https://hp-sir.onrender.com/api/v1/test/getTestResult/' + testId, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
