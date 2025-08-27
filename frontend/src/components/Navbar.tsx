@@ -1,14 +1,14 @@
-import  {useState} from 'react'
-import {motion} from "framer-motion"
-import { FiX , FiMenu } from 'react-icons/fi'
+import { useState } from 'react'
+import { motion } from "framer-motion"
+import { FiX, FiMenu } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const data = [
-        { content: 'Why us?'   },
-        { content: 'Our Batches'  },
-        { content: 'Pricing'  },
+        { content: 'Why us?' },
+        { content: 'Our Batches' },
+        { content: 'Pricing' },
         { content: 'Student Login' },
     ]
     const navigate = useNavigate();
@@ -18,9 +18,9 @@ const Navbar = () => {
 
 
             <div className="flex md:justify-start lg:justify-center gap-2 self-center md:self-start lg:p-4">
-                
-                <p  style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }} className="text-2xl md:text-3xl font-bold bg-clip-text flex items-center justify-center text-transparent">
-                    Abhayasa Classes
+
+                <p style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }} className="text-2xl md:text-3xl font-bold bg-clip-text flex items-center justify-center text-transparent">
+                    Abhyasa Classes
                 </p>
             </div>
 
@@ -30,8 +30,8 @@ const Navbar = () => {
                     data.map((data, index) => {
 
                         return (
-                            <p onClick={()=> {
-                                if(index == 3) {
+                            <p onClick={() => {
+                                if (index == 3) {
                                     navigate('/signin')
                                 } else {
                                     return
@@ -77,7 +77,7 @@ const Navbar = () => {
                                 className="flex flex-col lg:flex-row items-center gap-4 mt-4 md:mt-0"
                             >
                                 {data.map((item, index) => (
-                                    <p 
+                                    <p
                                         className="text-gray-500 text-base md:text-lg hover:text-black transition-colors duration-300 cursor-pointer"
                                         key={`${item.content}_${index}`}
                                     >

@@ -44,7 +44,7 @@ const LandingPage = () => {
           <FlipLink href="#">With</FlipLink>
         </div>
         <div className='w-[80%] m-auto flex justify-center items-center'>
-          <FlipLink href="#">Abhayasa</FlipLink>
+          <FlipLink href="#">Abhyasa</FlipLink>
         </div>
       </div>
 
