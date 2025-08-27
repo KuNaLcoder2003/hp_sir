@@ -19,6 +19,7 @@ interface AuthContextType {
     login: (cred: UserCred) => Promise<void>,
     logout: () => void,
     isAdmin: boolean,
+    batch_id: number
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,11 +28,12 @@ const TOKEN_KEY = "token";
 const ROLE_KEY = "role";
 
 export const AuthProvider = ({ children, logInUrl }: Props) => {
-    const [user, setUser] = useState<string>("")
+    const [user, setUser] = useState<string>(localStorage.getItem('name') || "")
     const [loggedIn, setIsLoggedIn] = useState<boolean>(false)
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
+    const [batch_id, setBatchId] = useState<number>(Number(localStorage.getItem('batchId')) || -1)
 
     useEffect(() => {
         const token = localStorage.getItem(TOKEN_KEY);
@@ -67,7 +69,10 @@ export const AuthProvider = ({ children, logInUrl }: Props) => {
             if (data.token) {
                 localStorage.setItem(TOKEN_KEY, `Bearer ${data.token}`)
                 localStorage.setItem(ROLE_KEY, data.role)
+                localStorage.setItem('name', data.user)
+                localStorage.setItem('batchId', `${data.batch_id}`)
                 setUser(data.user) // fallback to email
+                setBatchId(data.batch_id)
                 setIsLoggedIn(true)
                 setIsAdmin(data.role === "admin")
                 navigate("/dashboard")
@@ -91,7 +96,7 @@ export const AuthProvider = ({ children, logInUrl }: Props) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, loggedIn, loading, login, logout, isAdmin }}>
+        <AuthContext.Provider value={{ user, loggedIn, loading, login, logout, isAdmin, batch_id }}>
             {children}
         </AuthContext.Provider>
     )

@@ -7,7 +7,7 @@ import { useAuth } from '../context/authContext';
 
 const StudentNavbar: React.FC = ({ }) => {
     const navigate = useNavigate()
-    const { user, logout } = useAuth()
+    const { user, logout, batch_id } = useAuth()
     const [isOpen, setIsOpen] = useState(false)
     const data = [
         { content: 'Notes' },
@@ -32,7 +32,7 @@ const StudentNavbar: React.FC = ({ }) => {
                         return (
                             <p onClick={() => {
                                 if (index == 1) {
-                                    navigate('/tests')
+                                    navigate(`/tests/${batch_id}`)
                                 } else {
                                     return
                                 }

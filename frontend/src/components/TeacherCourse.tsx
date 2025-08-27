@@ -1,7 +1,7 @@
 import React, { useState, useEffect, type FormEvent } from 'react'
 import { BookOpen, Brain, Loader, X } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import ReactMarkdown from "react-markdown";
 
 interface Prop {
@@ -75,6 +75,7 @@ const TeacherCourse = () => {
         name: "",
         date: ""
     })
+    const navigate = useNavigate()
     const [addTestModal, setAddTestModal] = useState<boolean>(false)
     const [selectedSubjectId, setSelectedSubjectId] = useState<number>(-1)
     const [students, setStudents] = useState<any[]>([])
@@ -165,6 +166,34 @@ const TeacherCourse = () => {
                 if (data.valid) {
                     toast.success(data.message)
                     fetchStudents(Number(batch_id), selectedSubjectId)
+                } else {
+                    toast.error(data.message)
+                }
+            })
+        } catch (error) {
+            toast.error('Something went wrong')
+        }
+    }
+
+    function addNewTest(e: FormEvent) {
+        e.preventDefault()
+        try {
+            const batch_id = params.pathname.split('/')[3]
+            fetch('https://hp-sir.onrender.com/api/v1/test/newTest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    test_name: testDetails.name,
+                    batch_id: Number(batch_id),
+                    subject_id: Number(selectedSubjectId),
+                    date: new Date(testDetails.date)
+                })
+            }).then(async (response: Response) => {
+                const data = await response.json()
+                if (data.valid) {
+                    toast.success(data.message)
                 } else {
                     toast.error(data.message)
                 }
@@ -308,10 +337,16 @@ const TeacherCourse = () => {
                 addTestModal && (
                     <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
                         <div className='rounded-lg shadow-md h-auto p-4 w-[30%] m-auto'>
-                            <form onSubmit={(e) => handleAddNewSubject(e)} className='flex flex-col p-4 bg-white w-full gap-4 rounded-lg'>
+                            <form onSubmit={(e) => addNewTest(e)} className='flex flex-col p-4 bg-white w-full gap-4 rounded-lg'>
                                 <div className='flex w-full justify-between items-center'>
                                     <h2 className='text-lg font-bold'>Create new test </h2>
-                                    <X onClick={() => setAddTestModal(false)} className='cursor-pointer' />
+                                    <X onClick={() => {
+                                        setAddTestModal(false);
+                                        setTestDetails({
+                                            name: "",
+                                            date: ""
+                                        })
+                                    }} className='cursor-pointer' />
                                 </div>
                                 <div className='flex flex-col gap-2 items-baseline w-full'>
                                     <div className='w-full'>
@@ -621,7 +656,7 @@ const TeacherCourse = () => {
                             </div>
                         </div>
                     </header>
-                    <div className="w-[75%] mt-10 p-4 m-auto shadow-lg rounded-lg bg-white mb-8">
+                    <div className="max-w-8xl mt-10 ml-2 mr-2 p-4 m-auto shadow-lg rounded-lg bg-white mb-8">
                         <div className='flex flex-col gap-4 lg:flex-row items-center justify-between'>
                             <h1 className="text-3xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{batchName}</h1>
                             <div className='flex items-center justify-end w-[100%] lg:w-[60%]'>
@@ -640,19 +675,21 @@ const TeacherCourse = () => {
                                                 <h2 className="text-2xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{subject.subject_name}</h2>
                                                 <div className='flex justify-end items-center gap-2 w-[60%]'>
                                                     <button onClick={() => {
+                                                        navigate(`/teacher/test/${subject.batchId}/${subject.id}`)
+                                                    }} className="p-2 w-[50%] lg:w-[25%] bg-orange-500 text-white font-bold rounded-lg cursor-pointer">Tests</button>
+                                                    <button onClick={() => {
                                                         setIsStudentModal(true)
                                                         fetchStudents(subject.batchId, subject.id)
                                                         setSelectedSubjectId(subject.id)
-                                                    }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
+                                                    }} className="p-2 w-[50%] lg:w-[25%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
                                                     <button onClick={() => {
                                                         setAddTestModal(true)
-
                                                         setSelectedSubjectId(subject.id)
-                                                    }} className="p-2 w-[50%] lg:w-[30%] bg-green-500 text-white font-bold rounded-lg cursor-pointer">Add New Test</button>
+                                                    }} className="p-2 w-[50%] lg:w-[25%] bg-green-500 text-white font-bold rounded-lg cursor-pointer">Add New Test</button>
                                                     <button onClick={() => {
                                                         setUploadScreen(true)
                                                         setSubjectUploadId(subject.id)
-                                                    }} className="p-1 lg:p-2 w-[50%] lg:w-[30%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
+                                                    }} className="p-1 lg:p-2 w-[50%] lg:w-[25%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
                                                     <Brain className='cursor-pointer' onClick={() => {
                                                         setIsAiModalOpen(true)
                                                         localStorage.setItem('aiScreen', 'true')
