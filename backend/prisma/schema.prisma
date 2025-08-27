@@ -93,13 +93,15 @@ model Test{
 }
 
 model Results {
-  id         Int               @id @unique @default(autoincrement())
-  test_id Int @unique
+  // id         Int               @id @unique @default(autoincrement())
+  test_id Int 
   tests Test @relation(fields: [test_id] , references: [id])
-  student_id Int
+  student_id Int 
   student Student @relation(fields: [student_id] , references: [id] , onDelete:  Cascade)
   marks Int @default(0)
+  attempted Boolean @default(false)
   date DateTime 
+  @@id([student_id , test_id])
 }
 
 model Files {

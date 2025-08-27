@@ -28,6 +28,7 @@ function studentMiddleWare(req, res, next) {
         }
     }
     catch (error) {
+        console.log('Middleware error : ', error);
         res.status(500).json({
             message: 'Something went wrong'
         });
