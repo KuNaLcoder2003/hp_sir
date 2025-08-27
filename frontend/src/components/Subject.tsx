@@ -43,8 +43,9 @@ const Subject: React.FC = ({ }) => {
                         setIsPermitted(false)
                         setMessage(data.message)
                     }
+                    setLoading(false)
                 }
-                setLoading(false)
+
             })
         } catch (error) {
             setLoading(false)
