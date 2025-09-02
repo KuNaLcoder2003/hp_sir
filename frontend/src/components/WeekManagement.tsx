@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { BookOpen, Clipboard, CheckCircle, X } from "lucide-react"
+import { BookOpen, Clipboard, X } from "lucide-react"
 import { useLocation } from "react-router-dom"
 import toast, { Toaster } from "react-hot-toast"
 
@@ -89,6 +89,7 @@ const WeekManagement: React.FC = () => {
                     setWeek(data.week)
                     setDoubts(data.doubts)
                     setLoading(false)
+                    console.log(week.week_no)
                     const uniqueDays = [...new Set(data.slots.map((item: Slot) => item.day))];
                     setDays(uniqueDays)
                 } else {
