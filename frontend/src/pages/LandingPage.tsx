@@ -10,7 +10,6 @@ import FlipLink from '../components/FlipLink'
 import { HeroParallax } from '../components/HeroParallax'
 import { motion } from "framer-motion"
 import { Card, Card2, Card3 } from '../components/cta/Card'
-import ComparisonGrid from '../components/cta/Comparision'
 import PricingComponent from '../components/cta/Pricing'
 
 const LandingPage = () => {
