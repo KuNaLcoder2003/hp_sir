@@ -5,7 +5,7 @@ const Toppers: React.FC<{ url: string }> = ({ url }) => {
   return (
     <div className="bg-white text-black p-4 rounded-2xl w-70 shadow-lg">
       {/* Album Art */}
-      <div className="overflow-hidden rounded-xl h-40 w-full">
+      <div className="overflow-hidden rounded-xl h-80 w-full">
         <img
           loading="lazy"
           src={url}

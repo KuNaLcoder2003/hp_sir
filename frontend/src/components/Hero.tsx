@@ -11,6 +11,8 @@
 //                 Focused Coaching for Maths & Science Champions
 //             </h1>
 
+import { useNavigate } from "react-router-dom"
+
 //             <p className='w-[80%] px-2  xl:w-[30%]  text-center text-gray-800 font-semibold'>Fueling Young Minds, Shaping Bright Futures</p>
 //             <div className="lg:w-[30%] xl:w-[20%] p-2 bg-gradient-to-b from-indigo-500 to-indigo-900 rounded-[47.86px] shadow-[0_130px_35px_rgba(79,70,229,0.01),0_75px_36px_rgba(79,70,229,0.03),0_42px_30px_rgba(79,70,229,0.08),0_18px_22px_rgba(79,70,229,0.14),0_4px_12px_rgba(79,70,229,0.16)] opacity-100 will-change-transform">
 //                 <div className=" p-2 font-bold text-lg text-center bg-[radial-gradient(35%_63%_at_50%_50%,_rgb(99,102,241)_0%,_rgb(67,56,202)_100%)] rounded-[54.69px] border-[1.37px] border-solid border-[rgba(255,255,255,0.04)] opacity-100 text-white">
@@ -25,6 +27,7 @@
 // export default Hero
 
 const Hero = () => {
+    const navigate = useNavigate()
     return (
         <div className="w-full min-h-[70vh] lg:min-h-[50vh] flex flex-col justify-start items-center mt-54 mb-10 lg:mt-64 xl:mb-20 gap-6">
             <div className='absolute -top-[40px] flex items-center p-2 gap-2 rounded-full shadow-lg bg-gray-200'>
@@ -39,9 +42,9 @@ const Hero = () => {
                 Fueling Young Minds, Shaping Bright Futures
             </p>
 
-            <div className="lg:w-[30%] xl:w-[20%] p-2 bg-gradient-to-b from-indigo-500 to-indigo-900 rounded-[47.86px] shadow-[0_130px_35px_rgba(79,70,229,0.01),0_75px_36px_rgba(79,70,229,0.03),0_42px_30px_rgba(79,70,229,0.08),0_18px_22px_rgba(79,70,229,0.14),0_4px_12px_rgba(79,70,229,0.16)] opacity-100 will-change-transform">
-                <div className="p-2 font-bold text-lg text-center bg-[radial-gradient(35%_63%_at_50%_50%,_rgb(99,102,241)_0%,_rgb(67,56,202)_100%)] rounded-[54.69px] border border-[rgba(255,255,255,0.04)] text-white">
-                    Book a free intro call
+            <div onClick={() => navigate('/register')} className="lg:w-[30%] xl:w-[20%] p-2 bg-gradient-to-b from-indigo-500 to-indigo-900 rounded-[47.86px] shadow-[0_130px_35px_rgba(79,70,229,0.01),0_75px_36px_rgba(79,70,229,0.03),0_42px_30px_rgba(79,70,229,0.08),0_18px_22px_rgba(79,70,229,0.14),0_4px_12px_rgba(79,70,229,0.16)] opacity-100 will-change-transform">
+                <div className="p-2 cursor-pointer font-bold text-lg text-center bg-[radial-gradient(35%_63%_at_50%_50%,_rgb(99,102,241)_0%,_rgb(67,56,202)_100%)] rounded-[54.69px] border border-[rgba(255,255,255,0.04)] text-white">
+                    Regisetr Now
                 </div>
             </div>
         </div>

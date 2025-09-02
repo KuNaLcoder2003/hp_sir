@@ -4,52 +4,13 @@ import toast, { Toaster } from 'react-hot-toast'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ReactMarkdown from "react-markdown";
 
+import { type Content, type AIChat, type Subject, type SubjectContents, type newContent } from '../types/teacher';
+
 interface Prop {
     content_name: string,
     uploaded_on: string,
     type: string,
     url: string
-}
-
-interface AIChat {
-    role: string,
-    message: string,
-}
-
-interface Subject {
-    id: number,
-    subject_name: string,
-    batchId: number,
-    createdAt: string,
-    updatedAt: string
-}
-
-interface Content {
-    id: number,
-    content_name: string,
-    subjectId: number,
-    content_url: string,
-    type: string,
-    uploaded_on: string
-}
-
-interface cont {
-    content_id: number,
-    content_url: string,
-    content_name: string
-}
-
-interface newContent {
-    content_name: string,
-    type: string,
-    content: File[]
-}
-
-interface SubjectContents {
-    subject_id: number,
-    subject_name: string,
-    contents: cont[]
-
 }
 const ContentCard: React.FC<Prop> = ({ content_name, uploaded_on, type, url }) => {
     return (
@@ -665,40 +626,19 @@ const TeacherCourse = () => {
                                 }} className="p-2 w-[50%] lg:w-[30%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Add Subject</button>
                             </div>
                         </div>
-                        <div className='flex flex-col gap-8 w-full mt-8'>
+                        <div className='flex flex-col gap-8 w-full mt-8 p-2'>
                             {
                                 subjects.length == 0 ? (<div className='flex items-center justify-center text-xl font-bold'>No subjects yet add one</div>) : subjects.map((subject) => {
                                     return (
-                                        <div key={subject.id} className="w-full m-auto flex flex-col items-center justify-between">
+                                        <div key={subject.id} className="w-5xl shadow-lg bg-gray-50 shadow-gray-100 p-4 rounded-lg m-auto flex flex-col items-center justify-between">
 
                                             <div className='flex w-full justify-between items-center'>
                                                 <h2 className="text-2xl p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>{subject.subject_name}</h2>
-                                                <div className='flex justify-end items-center gap-2 w-[60%]'>
-                                                    <button onClick={() => {
-                                                        navigate(`/teacher/test/${subject.batchId}/${subject.id}`)
-                                                    }} className="p-2 w-[50%] lg:w-[25%] bg-orange-500 text-white font-bold rounded-lg cursor-pointer">Tests</button>
-                                                    <button onClick={() => {
-                                                        setIsStudentModal(true)
-                                                        fetchStudents(subject.batchId, subject.id)
-                                                        setSelectedSubjectId(subject.id)
-                                                    }} className="p-2 w-[50%] lg:w-[25%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
-                                                    <button onClick={() => {
-                                                        setAddTestModal(true)
-                                                        setSelectedSubjectId(subject.id)
-                                                    }} className="p-2 w-[50%] lg:w-[25%] bg-green-500 text-white font-bold rounded-lg cursor-pointer">Add New Test</button>
-                                                    <button onClick={() => {
-                                                        setUploadScreen(true)
-                                                        setSubjectUploadId(subject.id)
-                                                    }} className="p-1 lg:p-2 w-[50%] lg:w-[25%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
-                                                    <Brain className='cursor-pointer' onClick={() => {
-                                                        setIsAiModalOpen(true)
-                                                        localStorage.setItem('aiScreen', 'true')
-                                                    }} />
-                                                </div>
+
                                             </div>
                                             <div className='flex flex-col w-full gap-2'>
                                                 <h2 className="text-lg p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Current Content</h2>
-                                                <div className='w-full flex flex-wrap gap-4 items-center'>
+                                                {/* <div className='w-full flex gap-4 max-h-3xl mb-6 overflow-auto p-2 items-center'>
                                                     {
                                                         subjectContents.find(obj => obj.subject_id == subject.id)?.contents.map(object => {
                                                             return (
@@ -706,7 +646,44 @@ const TeacherCourse = () => {
                                                             )
                                                         })
                                                     }
+                                                </div> */}
+                                                <div className="w-full grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto p-2">
+                                                    {
+                                                        subjectContents.find(obj => obj.subject_id == subject.id)?.contents.map(object => {
+                                                            return (
+                                                                <ContentCard
+                                                                    key={object.content_id}
+                                                                    content_name={object.content_name}
+                                                                    type={'PDF'}
+                                                                    uploaded_on={'12-07-2025'}
+                                                                    url={object.content_url}
+                                                                />
+                                                            )
+                                                        })
+                                                    }
                                                 </div>
+                                            </div>
+                                            <div className='flex justify-start items-center gap-2 w-full'>
+                                                <button onClick={() => {
+                                                    navigate(`/teacher/test/${subject.batchId}/${subject.id}`)
+                                                }} className="p-2 w-[50%] lg:w-[25%] bg-orange-500 text-white font-bold rounded-lg cursor-pointer">Tests</button>
+                                                <button onClick={() => {
+                                                    setIsStudentModal(true)
+                                                    fetchStudents(subject.batchId, subject.id)
+                                                    setSelectedSubjectId(subject.id)
+                                                }} className="p-2 w-[50%] lg:w-[25%] bg-red-500 text-white font-bold rounded-lg cursor-pointer">Students</button>
+                                                <button onClick={() => {
+                                                    setAddTestModal(true)
+                                                    setSelectedSubjectId(subject.id)
+                                                }} className="p-2 w-[50%] lg:w-[25%] bg-green-500 text-white font-bold rounded-lg cursor-pointer">Add New Test</button>
+                                                <button onClick={() => {
+                                                    setUploadScreen(true)
+                                                    setSubjectUploadId(subject.id)
+                                                }} className="p-1 lg:p-2 w-[50%] lg:w-[25%] bg-blue-500 text-white font-bold rounded-lg cursor-pointer">Add New Content</button>
+                                                <Brain className='cursor-pointer' onClick={() => {
+                                                    setIsAiModalOpen(true)
+                                                    localStorage.setItem('aiScreen', 'true')
+                                                }} />
                                             </div>
                                         </div>
                                     )

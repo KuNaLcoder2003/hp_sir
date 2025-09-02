@@ -2,8 +2,8 @@ import React from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion"
 
 
-const products = [{ link: 'https://picsum.photos/seed/picsum/200/300' }, { link: 'https://picsum.photos/200/300?grayscale' },
-{ link: 'https://picsum.photos/seed/picsum/200/300' },
+const products = [{ link: '/WhatsApp Image 2025-08-27 at 5.52.34 PM.jpeg' }, { link: 'https://picsum.photos/200/300?grayscale' },
+{ link: '/WhatsApp Image 2025-08-27 at 5.52.34 PM.jpeg' },
 { link: 'https://picsum.photos/seed/picsum/200/300' }, { link: 'https://picsum.photos/seed/picsum/200/300' }, { link: 'https://picsum.photos/seed/picsum/200/300' },
 { link: 'https://picsum.photos/seed/picsum/200/300' }, { link: 'https://picsum.photos/seed/picsum/200/300' }, { link: 'https://picsum.photos/seed/picsum/200/300' }, { link: 'https://picsum.photos/seed/picsum/200/300' },
 { link: 'https://picsum.photos/seed/picsum/200/300' }, { link: 'https://picsum.photos/seed/picsum/200/300' },

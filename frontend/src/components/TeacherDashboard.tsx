@@ -281,6 +281,7 @@ import { BookOpen, User2Icon, Clock, X } from "lucide-react"
 import { useEffect, useState, type FormEvent } from "react"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
+import SlotMangement from "./SlotManagement"
 
 interface Subject {
   id: number,
@@ -302,6 +303,8 @@ interface Batches_Subjects {
   subjects: Subject[]
 }
 
+
+
 const TeacherDashboard = () => {
   // --- states & logic unchanged ---
   const [isOpen, setIsopen] = useState<boolean>(false)
@@ -309,6 +312,7 @@ const TeacherDashboard = () => {
     batch_name: '',
     duration: 0
   })
+
   const [courses_subjects, setcourses_subjects] = useState<Batches_Subjects[]>([])
   const [courses, setCourses] = useState<Batch[]>([])
 
@@ -334,6 +338,8 @@ const TeacherDashboard = () => {
           toast.error(data.message)
         }
       })
+
+
     } catch (error) {
       toast.error('Something went wrong')
     }
@@ -343,21 +349,21 @@ const TeacherDashboard = () => {
     let arr: Batches_Subjects[] = [];
     for (let i = 0; i < batches.length; i++) {
       let obj: Batches_Subjects
-      console.log('Current batch in process : ', batches[i])
+      // console.log('Current batch in process : ', batches[i])
       for (let j = 0; j < subjects.length; j++) {
         console.log(batches[i].batch_name, 'in inner loop')
         if (batches[i].id == subjects[j].batchId) {
-          console.log(batches[i].batch_name, 'passed if inside inner loop')
+          // console.log(batches[i].batch_name, 'passed if inside inner loop')
           const matched = arr.find(obj => obj.batch_id == batches[i].id)
           if (matched) {
-            console.log(batches[i].batch_name, 'passed if inside inner loop')
+            // console.log(batches[i].batch_name, 'passed if inside inner loop')
             obj = {
               ...matched,
               subjects: [...matched.subjects, { subject_name: subjects[j].subject_name, id: subjects[j].id, batchId: batches[i].id }]
             }
             arr = arr.map((o) => o.batch_id == obj.batch_id ? obj : o)
           } else {
-            console.log(batches[i].batch_name, 'passed if inside inner loop')
+            // console.log(batches[i].batch_name, 'passed if inside inner loop')
             obj = {
               batch_id: batches[i].id,
               batch_name: batches[i].batch_name,
@@ -386,11 +392,11 @@ const TeacherDashboard = () => {
     // Step 3: merge both
     const finalResult = [...findAll, ...missingBatches]
 
-    console.log(finalResult)
+    // console.log(finalResult)
 
 
 
-    console.log('FINAL RESULT : ', finalResult)
+    // console.log('FINAL RESULT : ', finalResult)
     return finalResult;
   }
 
@@ -419,9 +425,7 @@ const TeacherDashboard = () => {
 
   const Card: React.FC<Batches_Subjects> = ({ subjects, batch_id, batch_name }) => {
     const navigate = useNavigate()
-    useEffect(() => {
-      console.log(batch_id, " ", batch_name, " ", subjects)
-    }, [])
+
     return (
       <div
         onClick={() => navigate(`/teacher/course/${batch_id}`)}
@@ -491,7 +495,7 @@ const TeacherDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-8">
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50">
@@ -570,6 +574,7 @@ const TeacherDashboard = () => {
           })}
         </div>
       </div>
+      <SlotMangement />
     </div>
   )
 }

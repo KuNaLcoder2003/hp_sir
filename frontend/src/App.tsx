@@ -15,6 +15,10 @@ import { useAuth } from './context/authContext'
 import TestDetails from './components/TestDetails'
 import TeacherTest from './components/TeacherTest'
 
+import DoubtForm from './components/SlotBooking'
+import Thanks from './components/Thanks'
+import WeekManagement from './components/WeekManagement'
+
 
 
 function App() {
@@ -33,6 +37,9 @@ function App() {
       <Route path='/teacher/test/:batchId/:subjectId' element={<TeacherTest />} />
       <Route path='/subject/:id' element={loggedIn ? <Subject /> : <Signin />} />
       <Route path='/teacher/auth' element={loggedIn && isAdmin ? <TeacherDashboard /> : <TeacherAuth />} />
+      <Route path='/slot' element={<DoubtForm />} />
+      <Route path='/thanks/:doubtId' element={<Thanks />} />
+      <Route path='/teacher/week/:weekId' element={<WeekManagement />} />
     </Routes>
   )
 }
