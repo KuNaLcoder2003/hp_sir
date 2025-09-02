@@ -320,7 +320,7 @@ meetings_router.post('/doubtRequest/:slotId', async (req: express.Request, res: 
         res.status(200).json({
             message: 'Successfully created doubt , please wait while the admin approves it',
             valid: true,
-            doubtId: new_doubt.id,
+            doubtId: new_doubt.hashed_id,
         })
 
 
@@ -334,8 +334,8 @@ meetings_router.post('/doubtRequest/:slotId', async (req: express.Request, res: 
 
 meetings_router.post('/createMeetingLink/:doubtId', async (req: any, res: express.Response) => {
     try {
-        const slotId = req.params.doubtId;
-        if (!slotId) {
+        const doubtId = req.params.doubtId;
+        if (!doubtId) {
             res.status(400).json({
                 message: 'Bad request'
             })
@@ -346,7 +346,7 @@ meetings_router.post('/createMeetingLink/:doubtId', async (req: any, res: expres
         const result = await prisma.$transaction(async (tx): Promise<Boolean | any> => {
             const doubt_entry = await prisma.doubts.findFirst({
                 where: {
-                    id: Number(slotId),
+                    hashed_id: doubtId
                 }
             })
             if (!doubt_entry || doubt_entry.completed) {
@@ -380,7 +380,7 @@ meetings_router.post('/createMeetingLink/:doubtId', async (req: any, res: expres
                     start_url: meeting_deatils.start_url,
                     meeting_password: meeting_deatils.password,
                     doubt_id: doubt_entry.id,
-                    slot_id: Number(slotId),
+                    slot_id: doubt_entry.slot_id,
                     completed: false,
                     user_email: doubt_entry.user_email,
                     date: doubt_entry.date

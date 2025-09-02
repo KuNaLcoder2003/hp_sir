@@ -304,7 +304,7 @@ meetings_router.post('/doubtRequest/:slotId', (req, res) => __awaiter(void 0, vo
         res.status(200).json({
             message: 'Successfully created doubt , please wait while the admin approves it',
             valid: true,
-            doubtId: new_doubt.id,
+            doubtId: new_doubt.hashed_id,
         });
     }
     catch (error) {
@@ -316,8 +316,8 @@ meetings_router.post('/doubtRequest/:slotId', (req, res) => __awaiter(void 0, vo
 }));
 meetings_router.post('/createMeetingLink/:doubtId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const slotId = req.params.doubtId;
-        if (!slotId) {
+        const doubtId = req.params.doubtId;
+        if (!doubtId) {
             res.status(400).json({
                 message: 'Bad request'
             });
@@ -327,7 +327,7 @@ meetings_router.post('/createMeetingLink/:doubtId', (req, res) => __awaiter(void
         const result = yield prisma.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
             const doubt_entry = yield prisma.doubts.findFirst({
                 where: {
-                    id: Number(slotId),
+                    hashed_id: doubtId
                 }
             });
             if (!doubt_entry || doubt_entry.completed) {
@@ -359,7 +359,7 @@ meetings_router.post('/createMeetingLink/:doubtId', (req, res) => __awaiter(void
                     start_url: meeting_deatils.start_url,
                     meeting_password: meeting_deatils.password,
                     doubt_id: doubt_entry.id,
-                    slot_id: Number(slotId),
+                    slot_id: doubt_entry.slot_id,
                     completed: false,
                     user_email: doubt_entry.user_email,
                     date: doubt_entry.date

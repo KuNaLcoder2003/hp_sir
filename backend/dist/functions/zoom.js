@@ -8,11 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateZoomMeeting = exports.generateZoomAccessToken = exports.getAuthHeaders = void 0;
-const zoomClientId = 'biZacBONQQiH9HtxU1P7aw';
-const zoomAccountId = 'gH0yOU42TfusPssLtkmaLg';
-const zoomClientSecret = 'MFrVr8hi7UyocYpVpGv94o5sDLf81L9B';
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const zoomClientId = `${process.env.ZOOM_CLIENT_ID}`;
+const zoomAccountId = `${process.env.ZOOM_ACCOUNT_ID}`;
+const zoomClientSecret = `${process.env.ZOOM_CLIENT_SECRET}`;
 const base = require('base-64');
 const getAuthHeaders = () => {
     return {
