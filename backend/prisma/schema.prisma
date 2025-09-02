@@ -114,3 +114,55 @@ model Files {
   subject Subjects @relation(fields: [subject_id] , references: [id])
 }
 
+model Doubts {
+  id         Int               @id @unique @default(autoincrement())
+  user_email String @db.VarChar(200)
+  doubt_type String @db.VarChar(200)
+  class String @db.VarChar(200)
+  completed Boolean @default(false)
+  meeting_id String @default("")
+  request_accepted Boolean @default(false)
+  date DateTime
+  meetings Meeting[]
+  slot_id Int
+  slot Slot @relation(fields: [slot_id] , references: [id])
+  hashed_id String @default("")
+}
+model Meeting {
+  id         Int               @id @unique @default(autoincrement())
+  meeting_id String @default("")
+  join_url String @default("")
+  date DateTime 
+  doubt_id Int @unique
+  doubt Doubts @relation(fields: [doubt_id] , references: [id])
+  completed Boolean @default(false)
+  user_email String @db.VarChar(200)
+  start_url String 
+  joinTime String
+  slot_id Int
+  slot Slot @relation(fields: [slot_id] , references: [id])
+  meeting_password String 
+}
+
+model Slot {
+  id          Int       @id @default(autoincrement())
+  week_id Int
+  week_number Int
+  week Week @relation(fields: [week_id] , references: [id])
+  day String
+  time String
+  duration Int @default(15)
+  slot_booked Boolean @default(false)
+  doubts Doubts[]
+  meetings Meeting[]
+}
+
+model Week {
+  id          Int       @id @default(autoincrement())
+  week_no Int @unique @default(autoincrement())
+  completed Boolean @default(false)
+  slots Slot[]
+  week_name String @db.VarChar(200)
+}
+
+

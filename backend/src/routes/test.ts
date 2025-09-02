@@ -124,6 +124,7 @@ test_router.get('/getTestResult/:testId', studentMiddleWare, async (req: any, re
                 email: studentEmail
             }
         })
+
         if (!student) {
             res.status(403).json({
                 message: 'Unauthorized'
