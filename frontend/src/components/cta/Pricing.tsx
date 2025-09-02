@@ -18,7 +18,7 @@ export default function PricingComponent() {
                         <h3 className="text-xl font-bold">Doubt Session</h3>
                     </div>
 
-                    <p className="text-5xl font-bold text-gray-800 mb-6">$500</p>
+                    <p className="text-5xl font-bold text-gray-800 mb-6">₹500</p>
 
                     {/* Features List - With Flex Grow to Push Button Down */}
                     <ul className="space-y-3 flex-grow">
@@ -45,7 +45,7 @@ export default function PricingComponent() {
                         <h3 className="text-xl font-bold">Bundle(Test Papers + Content)</h3>
                     </div>
 
-                    <p className="text-5xl font-bold text-gray-800 mb-6">$800</p>
+                    <p className="text-5xl font-bold text-gray-800 mb-6">₹800</p>
 
                     {/* Features List - With Flex Grow to Push Button Down */}
                     <ul className="space-y-3 flex-grow">
@@ -71,7 +71,7 @@ export default function PricingComponent() {
                         <h3 className="text-xl font-bold">Test Papers</h3>
                     </div>
 
-                    <p className="text-5xl font-bold text-gray-800 mb-6">$500</p>
+                    <p className="text-5xl font-bold text-gray-800 mb-6">₹500</p>
 
                     {/* Features List - With Flex Grow to Push Button Down */}
                     <ul className="space-y-3 flex-grow">
@@ -103,7 +103,7 @@ export default function PricingComponent() {
                         <h3 className="text-xl font-bold">Content</h3>
                     </div>
 
-                    <p className="text-5xl font-bold text-gray-800 mb-6">$800</p>
+                    <p className="text-5xl font-bold text-gray-800 mb-6">₹600</p>
 
                     {/* Features List - With Flex Grow to Push Button Down */}
                     <ul className="space-y-3 flex-grow">
