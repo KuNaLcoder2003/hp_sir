@@ -174,7 +174,7 @@ meetings_router.get('/doubtDetails/:doubtId', (req, res) => __awaiter(void 0, vo
         const doubtId = req.params.doubtId;
         const doubt = yield prisma.doubts.findFirst({
             where: {
-                id: Number(doubtId)
+                hashed_id: doubtId
             }
         });
         if (!doubt) {
@@ -327,7 +327,7 @@ meetings_router.post('/createMeetingLink/:doubtId', (req, res) => __awaiter(void
         const result = yield prisma.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
             const doubt_entry = yield prisma.doubts.findFirst({
                 where: {
-                    hashed_id: doubtId
+                    id: Number(doubtId)
                 }
             });
             if (!doubt_entry || doubt_entry.completed) {

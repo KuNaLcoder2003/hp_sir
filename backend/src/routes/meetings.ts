@@ -183,7 +183,7 @@ meetings_router.get('/doubtDetails/:doubtId', async (req: express.Request, res: 
         const doubtId = req.params.doubtId;
         const doubt = await prisma.doubts.findFirst({
             where: {
-                id: Number(doubtId)
+                hashed_id: doubtId
             }
         })
         if (!doubt) {
@@ -346,7 +346,7 @@ meetings_router.post('/createMeetingLink/:doubtId', async (req: any, res: expres
         const result = await prisma.$transaction(async (tx): Promise<Boolean | any> => {
             const doubt_entry = await prisma.doubts.findFirst({
                 where: {
-                    hashed_id: doubtId
+                    id: Number(doubtId)
                 }
             })
             if (!doubt_entry || doubt_entry.completed) {
