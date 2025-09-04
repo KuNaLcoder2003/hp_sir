@@ -66,7 +66,7 @@ const DoubtForm: React.FC = () => {
     // Update ISO whenever selection changes
     useEffect(() => {
         setLoading(true)
-        fetch('http://localhost:3000/api/v1/meetings/bookingDetails', {
+        fetch('https://hp-sir.onrender.com/api/v1/meetings/bookingDetails', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -101,7 +101,7 @@ const DoubtForm: React.FC = () => {
             date: isoDate,
         });
         try {
-            fetch('http://localhost:3000/api/v1/meetings/doubtRequest/' + `${selectedSlotId}`, {
+            fetch('https://hp-sir.onrender.com/api/v1/meetings/doubtRequest/' + `${selectedSlotId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

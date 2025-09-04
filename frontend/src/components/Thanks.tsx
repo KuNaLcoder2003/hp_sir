@@ -25,7 +25,7 @@ const Thanks: React.FC = () => {
         const id = path.pathname.split('/')[2]
         try {
             setLoading(true)
-            fetch('http://localhost:3000/api/v1/meetings/doubtDetails/' + id, {
+            fetch('https://hp-sir.onrender.com/api/v1/meetings/doubtDetails/' + id, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

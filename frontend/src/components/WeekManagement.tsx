@@ -76,7 +76,7 @@ const WeekManagement: React.FC = () => {
         const weekId = path.pathname.split('/').at(-1)
         try {
             setLoading(true)
-            fetch('http://localhost:3000/api/v1/meetings/weekDetails/' + weekId, {
+            fetch('https://hp-sir.onrender.com/api/v1/meetings/weekDetails/' + weekId, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ const WeekManagement: React.FC = () => {
         setMeetingModalOpen(true)
         try {
             setIsMeetingLoad(true)
-            fetch('http://localhost:3000/api/v1/meetings/meetingDetails/' + `${doubtId}`, {
+            fetch('https://hp-sir.onrender.com/api/v1/meetings/meetingDetails/' + `${doubtId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -137,7 +137,7 @@ const WeekManagement: React.FC = () => {
         }
         try {
             setGenerating(true)
-            fetch('http://localhost:3000/api/v1/meetings/createMeetingLink/' + `${doubtId}`, {
+            fetch('https://hp-sir.onrender.com/api/v1/meetings/createMeetingLink/' + `${doubtId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

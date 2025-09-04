@@ -56,7 +56,7 @@ const SlotMangement: React.FC = () => {
     const [endTime, setEndTime] = useState<number>(12)
     const navigate = useNavigate()
     useEffect(() => {
-        fetch('http://localhost:3000/api/v1/meetings/weeks', {
+        fetch('/api/v1/meetings/weeks', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ const SlotMangement: React.FC = () => {
     function addNewWeek(e: FormEvent) {
         e.preventDefault()
         try {
-            fetch('http://localhost:3000/api/v1/meetings/postNewWeek', {
+            fetch('https://hp-sir.onrender.com/api/v1/meetings/postNewWeek', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -127,7 +127,7 @@ const SlotMangement: React.FC = () => {
                     tempArr.push(obj)
                 }
             }
-            fetch('http://localhost:3000/api/v1/meetings/slots/' + selectedWeekId, {
+            fetch('https://hp-sir.onrender.com/api/v1/meetings/slots/' + selectedWeekId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
