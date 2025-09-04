@@ -56,7 +56,7 @@ const SlotMangement: React.FC = () => {
     const [endTime, setEndTime] = useState<number>(12)
     const navigate = useNavigate()
     useEffect(() => {
-        fetch('/api/v1/meetings/weeks', {
+        fetch('https://hp-sir.onrender.com/api/v1/meetings/weeks', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
