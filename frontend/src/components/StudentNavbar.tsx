@@ -34,7 +34,7 @@ const StudentNavbar: React.FC = ({ }) => {
                                 if (index == 1) {
                                     navigate(`/tests/${batch_id}`)
                                 } else {
-                                    return
+                                    navigate('/dashboard')
                                 }
                             }} className='text-gray-400 text-lg font-semibold hover:text-black transition-text duration-400 cursor-pointer' key={`${data.content}_${index}`}>{data.content}</p>
                         )
