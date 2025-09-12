@@ -2,9 +2,12 @@ import express from "express"
 import { PrismaClient } from "../../generated/prisma";
 const prisma = new PrismaClient()
 import multer from "multer"
+import crypto from "crypto"
 import { uploadOnCloud } from "../functions/cloudinary";
 import { generateToken } from "../functions/generateToken";
 import bcrypt from "bcrypt"
+import { sendMail } from "../functions/mail";
+import { sha256 } from "crypto-hash";
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const teacher_router = express.Router();
@@ -14,6 +17,25 @@ interface NewBatch {
     batch_name: string,
     duration: number
 }
+
+
+function toHash(string: string): number {
+
+    let hash: number = 0;
+
+    if (string.length == 0) return hash;
+
+    for (let i = 0; i < string.length; i++) {
+        let char = string.charCodeAt(i);
+        hash = ((hash << 5) + hash) + char;
+        hash = hash & hash;
+    }
+
+    return Math.abs(hash)
+}
+
+
+
 
 
 teacher_router.get('/student/:batchid/:subjectId', async (req: any, res: express.Response) => {
@@ -48,7 +70,7 @@ teacher_router.get('/student/:batchid/:subjectId', async (req: any, res: express
 
 teacher_router.post('/signin', async (req: express.Request, res: express.Response) => {
     try {
-        const { email, password } = req.body.adminCred;
+        const { email, password, teacherCode } = req.body.adminCred;
         if (!email || !password) {
             res.status(400).json({
                 message: 'Bad requests'
@@ -123,12 +145,22 @@ teacher_router.post('/signup', async (req: express.Request, res: express.Respons
             })
             return
         }
+        // const teacher_code = await sha256(`${email} ${first_name}`)
+        // if (!teacher_code) {
+        //     res.status(400).json({
+        //         message: 'Error creating account'
+        //     })
+        //     return
+        // }
+        const teacher_code = toHash(`${email} ${first_name}`)
+
         const new_teacher = await prisma.teacher.create({
             data: {
                 first_name: first_name,
                 last_name: last_name,
                 email: email,
-                password: hashedPassword
+                password: hashedPassword,
+                teacher_code: `${teacher_code}`
             }
         })
         if (!new_teacher) {
@@ -137,11 +169,137 @@ teacher_router.post('/signup', async (req: express.Request, res: express.Respons
             })
             return
         }
+        const mail = await sendMail('kunalindia59@gmail.com', ['himanshprnm@gmail.com'], 'Teacher Login Details', `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Welcome Onboard</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background-color: #f7f9fc;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      .header {
+        background: linear-gradient(135deg, #ff9800, #f44336);
+        padding: 20px;
+        text-align: center;
+        color: #fff;
+      }
+      .header img {
+        width: 120px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .content {
+        padding: 30px 25px;
+        line-height: 1.6;
+      }
+      .content h2 {
+        color: #222;
+        margin-bottom: 10px;
+      }
+      .details {
+        background: #f1f5ff;
+        border-left: 4px solid #3f51b5;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .details p {
+        margin: 8px 0;
+        font-size: 15px;
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 24px;
+        background: #3f51b5;
+        color: #fff !important;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 8px;
+        transition: background 0.3s ease;
+      }
+      .btn:hover {
+        background: #283593;
+      }
+      .footer {
+        background: #f7f9fc;
+        text-align: center;
+        padding: 15px;
+        font-size: 13px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="header">
+        <img src="cid:hp_sir" alt="Welcome Image" />
+        <h1>Welcome to the Teaching Community!</h1>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+        <h2>We’re excited to have you onboard 🎉</h2>
+        <p>
+          Congratulations on beginning this amazing journey of empowering young minds.  
+          Your dedication and passion for teaching will inspire students to achieve their dreams.  
+          Remember, every great achievement begins with a teacher like you.
+        </p>
+
+        <!-- LOGIN DETAILS -->
+        <div class="details">
+          <p><strong>Teacher Code:</strong> ${new_teacher.teacher_code}</p>
+          <p><strong>Username:</strong> ${new_teacher.email}</p>
+        </div>
+
+        <p>
+          Use the details above to log in and start your teaching journey with us.  
+          We believe in you, and together we’ll make a lasting impact. 🌟
+        </p>
+
+        <a href="https://your-login-page.com" class="btn">Login Now</a>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <p>© 2025 Your Organization Name. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+  </html>
+  `)
+        if (!mail) {
+            res.status(403).json({
+                message: 'Unable to send mail , please contact admin for your generated teacher code'
+            })
+        }
         res.status(200).json({
             message: 'Successfully created',
             valid: true
         })
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: 'Something went wrong'
         })
