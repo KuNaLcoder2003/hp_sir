@@ -18,6 +18,8 @@ import TeacherTest from './components/TeacherTest'
 import DoubtForm from './components/SlotBooking'
 import Thanks from './components/Thanks'
 import WeekManagement from './components/WeekManagement'
+import Teacher from './components/Teacher'
+import TeacherSignup from './components/teacher/TeacherSignup'
 
 
 
@@ -40,6 +42,7 @@ function App() {
       <Route path='/slot' element={<DoubtForm />} />
       <Route path='/thanks/:doubtId' element={<Thanks />} />
       <Route path='/teacher/week/:weekId' element={<WeekManagement />} />
+      <Route path='/teacher/signup' element={<TeacherSignup />} />
     </Routes>
   )
 }

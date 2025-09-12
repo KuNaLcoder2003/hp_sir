@@ -9,7 +9,7 @@ const Navbar = () => {
         { content: 'Why us?' },
         { content: 'Our Batches' },
         { content: 'Pricing' },
-        { content: 'Student Login' },
+        { content: 'Login' },
     ]
     const navigate = useNavigate();
 
