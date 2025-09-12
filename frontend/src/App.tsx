@@ -18,7 +18,6 @@ import TeacherTest from './components/TeacherTest'
 import DoubtForm from './components/SlotBooking'
 import Thanks from './components/Thanks'
 import WeekManagement from './components/WeekManagement'
-import Teacher from './components/Teacher'
 import TeacherSignup from './components/teacher/TeacherSignup'
 
 
