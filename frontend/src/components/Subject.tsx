@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
 import StudentNavbar from './StudentNavbar'
-import { RPProvider, RPDefaultLayout, RPPages, RPConfig } from '@pdf-viewer/react'
 
 interface Content_Obj {
     content_name: string,
@@ -20,8 +19,6 @@ const Subject: React.FC = ({ }) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [permitted, setIsPermitted] = useState<boolean>(false)
     const [message, setMessage] = useState<string>("")
-    const [pdfView, setPdfView] = useState<boolean>(false)
-    const [url, setUrl] = useState<string>("")
     useEffect(() => {
         const id = path.pathname.split('/')[2]
         try {
@@ -67,23 +64,14 @@ const Subject: React.FC = ({ }) => {
                                     {
                                         content.length == 0 ? <p>No Content uploaded yet</p> : content.map((obj, index) => {
                                             return (
-                                                <ContentCard setPdfView={setPdfView} setUrl={setUrl} key={index} uploaded_on={"23-07-2025"} url={obj.content_url} content_name={obj.content_name} type={obj.type} />
+                                                <ContentCard key={index} uploaded_on={"23-07-2025"} url={obj.content_url} content_name={obj.content_name} type={obj.type} />
                                             )
                                         })
                                     }
                                 </div>
                             </div>
                         </div>
-                        <>
-                            {
-                                pdfView && <embed
-                                    src={url}
-                                    type="application/pdf"
-                                    width="100%"
-                                    height="600px"
-                                />
-                            }
-                        </>
+
                     </div>
 
 
@@ -102,16 +90,13 @@ interface Content {
     uploaded_on: string,
     type: string,
     url: string,
-    setUrl: React.Dispatch<React.SetStateAction<string>>,
-    setPdfView: React.Dispatch<React.SetStateAction<boolean>>
 
 }
 
-const ContentCard: React.FC<Content> = ({ content_name, uploaded_on, type, setUrl, url, setPdfView }) => {
+const ContentCard: React.FC<Content> = ({ content_name, uploaded_on, type, url }) => {
     return (
         <div onClick={() => {
-            setUrl(url)
-            setPdfView(true)
+            window.open(url, "_blank")
         }} className='w-[300px] h-[100px] p-2 bg-stone-100 flex flex-col cursor-pointer items-baseline rounded-lg shadow-lg'>
             <h2 className='text-xl font-bold text-gray-500'>{content_name}</h2>
             <div className='flex w-full items-center gap-4'>
