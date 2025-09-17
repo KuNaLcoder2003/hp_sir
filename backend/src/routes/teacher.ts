@@ -34,10 +34,6 @@ function toHash(string: string): number {
     return Math.abs(hash)
 }
 
-
-
-
-
 teacher_router.get('/student/:batchid/:subjectId', async (req: any, res: express.Response) => {
     const batchId = req.params.batchid
     const subjectId = req.params.subjectId
