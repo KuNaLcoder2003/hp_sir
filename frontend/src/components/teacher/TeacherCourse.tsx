@@ -4,7 +4,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ReactMarkdown from "react-markdown";
 
-import { type Content, type AIChat, type Subject, type SubjectContents, type newContent } from '../types/teacher';
+import { type AIChat, type newContent, type SubjectContents, type Subject, type Content } from '../../types/teacher';
 
 interface Prop {
     content_name: string,

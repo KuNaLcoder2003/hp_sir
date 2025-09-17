@@ -171,7 +171,7 @@ import React, { useState, type FormEvent } from 'react'
 import { BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
-import { useAuth } from '../context/authContext'
+import { useAuth } from '../../context/authContext'
 
 const Signin: React.FC = () => {
     const [studentCred, setStudentCred] = useState({

@@ -6,7 +6,7 @@ interface Week {
     completed: boolean
 }
 
-import Modal from "./Modal"
+import Modal from "../common/Modal"
 
 interface Slot {
     week_id: Number

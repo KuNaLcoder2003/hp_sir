@@ -11,7 +11,7 @@ import {
   Medal,
   Loader2,
 } from "lucide-react";
-import StudentNavbar from "../components/StudentNavbar"; // same navbar as your theme
+import StudentNavbar from "./StudentNavbar"; // same navbar as your theme
 import { useLocation } from "react-router-dom";
 
 interface TestDetails {

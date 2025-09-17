@@ -1,13 +1,13 @@
 
-import Navbar from '../components/Navbar'
-import Hero from '../components/Hero'
+import Navbar from '../components/common/Navbar'
+import Hero from '../components/common/Hero'
 
-import Services from '../components/Services'
-import Footer from '../components/Footer'
-import TopperList from '../components/TopperList'
-import Teacher from '../components/Teacher'
-import FlipLink from '../components/FlipLink'
-import { HeroParallax } from '../components/HeroParallax'
+import Services from '../components/common/Services'
+import Footer from '../components/common/Footer'
+import TopperList from '../components/common/TopperList'
+import Teacher from '../components/teacher/Teacher'
+import FlipLink from '../components/common/FlipLink'
+import { HeroParallax } from '../components/common/HeroParallax'
 import { motion } from "framer-motion"
 import { Card, Card2, Card3 } from '../components/cta/Card'
 import PricingComponent from '../components/cta/Pricing'
