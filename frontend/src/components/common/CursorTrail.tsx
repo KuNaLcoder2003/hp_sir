@@ -3,7 +3,7 @@
 
 import { createRef, useRef } from "react"
 
-import { cn } from "../uti"
+import { cn } from "../../uti"
 
 interface ImageMouseTrailProps {
   items: ImageItem[]
