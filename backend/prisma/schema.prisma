@@ -37,6 +37,7 @@ model Batch {
   students_subjects StudentSubjects[]
   file Files[]
   test Test[]
+  folder Folder[]
 }
 
 model Subjects {
@@ -50,6 +51,7 @@ model Subjects {
   students     StudentSubjects[]
   file Files[]
   test Test[]
+  folder Folder[]
 }
 
 model Content {
@@ -113,6 +115,8 @@ model Files {
   batch      Batch  @relation(fields: [batch_id] , references: [id])
   subject_id Int
   subject Subjects @relation(fields: [subject_id] , references: [id])
+  folder_id Int
+  folder Folder @relation(fields: [folder_id] , references: [id])
 }
 
 model Doubts {
@@ -166,4 +170,13 @@ model Week {
   week_name String @db.VarChar(200)
 }
 
+model Folder {
+  id          Int       @id @default(autoincrement())
+  folder_name String @db.VarChar(200)
+  batch_id Int 
+  batch Batch @relation(fields: [batch_id] , references: [id])
+  subject_id Int
+  subject Subjects @relation(fields: [subject_id] , references: [id])
+  files Files[]
+}
 
