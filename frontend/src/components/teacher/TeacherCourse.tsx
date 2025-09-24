@@ -1,28 +1,29 @@
-import React, { useState, useEffect, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { BookOpen, Brain, Loader, X } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ReactMarkdown from "react-markdown";
+import { CiFolderOn } from "react-icons/ci";
 
-import { type AIChat, type newContent, type SubjectContents, type Subject, type Content } from '../../types/teacher';
+import { type AIChat, type Subject, type Folder, type SubjectFolders } from '../../types/teacher';
 
-interface Prop {
-    content_name: string,
-    uploaded_on: string,
-    type: string,
-    url: string
-}
-const ContentCard: React.FC<Prop> = ({ content_name, uploaded_on, type, url }) => {
-    return (
-        <div onClick={() => window.open(`${url}`, '_blank')} className='w-[300px] h-[100px] p-2 bg-stone-100 flex flex-col items-baseline rounded-lg shadow-lg'>
-            <h2 className='text-xl font-bold text-gray-500'>{content_name}</h2>
-            <div className='flex w-full items-center gap-4'>
-                <p className='text-lg text-semibold'>{uploaded_on}</p>
-                <p className='text-lg text-semibold'>{type}</p>
-            </div>
-        </div>
-    )
-}
+// interface Prop {
+//     content_name: string,
+//     uploaded_on: string,
+//     type: string,
+//     url: string
+// }
+// const ContentCard: React.FC<Prop> = ({ content_name, uploaded_on, type, url }) => {
+//     return (
+//         <div onClick={() => window.open(`${url}`, '_blank')} className='w-[300px] h-[100px] p-2 bg-stone-100 flex flex-col items-baseline rounded-lg shadow-lg'>
+//             <h2 className='text-xl font-bold text-gray-500'>{content_name}</h2>
+//             <div className='flex w-full items-center gap-4'>
+//                 <p className='text-lg text-semibold'>{uploaded_on}</p>
+//                 <p className='text-lg text-semibold'>{type}</p>
+//             </div>
+//         </div>
+//     )
+// }
 
 interface NewSubject {
     subject_name: string,
@@ -30,12 +31,13 @@ interface NewSubject {
 }
 
 const TeacherCourse = () => {
-    const [uploadScreen, setUploadScreen] = useState<boolean>(false)
+
     const [batchName, setBatchName] = useState<string>("")
     const [testDetails, setTestDetails] = useState({
         name: "",
         date: ""
     })
+
     const navigate = useNavigate()
     const [addTestModal, setAddTestModal] = useState<boolean>(false)
     const [selectedSubjectId, setSelectedSubjectId] = useState<number>(-1)
@@ -47,17 +49,17 @@ const TeacherCourse = () => {
     const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(localStorage.getItem('aiScreen') ? true : false)
     const [loading, setLoading] = useState<boolean>(false)
     const [permitList, setPermitList] = useState<number[]>([])
-    const [uploadLoading, setUploadLoading] = useState<boolean>(false)
+
     const [subjectUploadId, setSubjectUploadId] = useState<number>(1)
     const [addNewSubject, setAddNewSubject] = useState<boolean>(false)
     const [newSubject, setNewSubject] = useState<NewSubject>({
         subject_name: "",
         duration: 0
     })
-    const [newContent, setNewContent] = useState<newContent>({
-        content_name: "",
-        type: "",
-        content: []
+    const [newFolderScreen, setNewFolderScreen] = useState<boolean>(false)
+
+    const [newFolder, setNewFolder] = useState({
+        folder_name: ''
     })
 
     async function fetchStudents(batchId: number, subjectId: number) {
@@ -81,17 +83,45 @@ const TeacherCourse = () => {
     }
 
     const [subjects, setSubjects] = useState<Subject[]>([])
-    const [subjectContents, setSubjectContents] = useState<SubjectContents[]>([])
+    const [subjectFolders, setSubjectFolders] = useState<SubjectFolders[]>([])
     const params = useLocation()
     useEffect(() => {
         fetch_subjects()
     }, [])
 
+    const addNewFolder = (e: FormEvent, subjectId: number) => {
+        e.preventDefault()
+        const batch_id = params.pathname.split('/')[3]
+        try {
+            fetch('http://localhost:3000/api/v1/teacher/createFolder/' + `${subjectId}` + '/' + `${batch_id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    folder_deatils: {
+                        folder_name: newFolder.folder_name
+                    }
+                })
+            }).then(async (res: Response) => {
+                const data = await res.json()
+                if (data.valid) {
+                    toast.success(data.message)
+
+                } else {
+                    toast.error(data.message)
+                }
+            })
+        } catch (error) {
+            toast.error('Something went wrong')
+        }
+    }
+
     function fetch_subjects() {
         const id = params.pathname.split('/')[3]
         try {
             setLoading(true)
-            fetch('https://hp-sir.onrender.com/api/v1/teacher/course/' + id, {
+            fetch('http://localhost:3000/api/v1/teacher/course/' + id, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -101,8 +131,8 @@ const TeacherCourse = () => {
                 if (data.batch_name) {
                     setBatchName(data.batch_name)
                     setSubjects(data.subjects)
-                    let arr = subject_contents_merge(data.subjects, data.content)
-                    setSubjectContents(arr)
+                    let arr = subject_folders_merge(data.subjects, data.folders)
+                    setSubjectFolders(arr)
 
                 } else {
                     toast.error(data.message)
@@ -164,20 +194,19 @@ const TeacherCourse = () => {
         }
     }
 
-    function subject_contents_merge(subjects: Subject[], content: Content[]) {
-        let arr: SubjectContents[] = [];
+    function subject_folders_merge(subjects: Subject[], folder: Folder[]) {
+        let arr: SubjectFolders[] = [];
         for (let i = 0; i < subjects.length; i++) {
-            let obj: SubjectContents
-            for (let k = 0; k < content.length; k++) {
+            let obj: SubjectFolders
+            for (let k = 0; k < folder.length; k++) {
                 let matched = arr.find(obj => obj.subject_id == subjects[i].id)
-                if (content[k].subjectId == subjects[i].id) {
+                if (folder[k].subject_id == subjects[i].id) {
                     if (matched) {
                         obj = {
                             ...matched,
-                            contents: [...matched.contents, {
-                                content_id: content[k].id,
-                                content_name: content[k].content_name,
-                                content_url: content[k].content_url
+                            folders: [...matched.folders, {
+                                folder_id: folder[k].id,
+                                folder_name: folder[k].folder_name,
                             }]
                         }
                         arr = arr.map((o) => {
@@ -191,7 +220,7 @@ const TeacherCourse = () => {
                         obj = {
                             subject_id: subjects[i].id,
                             subject_name: subjects[i].subject_name,
-                            contents: [{ content_id: content[k].id, content_name: content[k].content_name, content_url: content[k].content_url }]
+                            folders: [{ folder_id: folder[k].id, folder_name: folder[k].folder_name }]
                         }
                         arr.push(obj)
                     }
@@ -201,40 +230,8 @@ const TeacherCourse = () => {
         console.log(arr)
         return arr
     }
-    function handleFile(e: any) {
-        setNewContent({
-            ...newContent,
-            content: e.target.files
-        })
-    }
-    function addNewContent(e: FormEvent) {
-        e.preventDefault();
-        try {
-            setUploadLoading(true)
-            const formData = new FormData()
-            formData.append('content_name', newContent.content_name)
-            formData.append('type', newContent.type)
-            formData.append('content', newContent.content[0])
-            fetch('https://hp-sir.onrender.com/api/v1/teacher/content/' + `${subjectUploadId}`, {
-                method: 'POST',
-                body: formData
-            }).then(async (response: Response) => {
-                const data = await response.json()
-                if (data.new_content) {
-                    setUploadScreen(false)
-                    setUploadLoading(false)
-                    fetch_subjects()
-                    toast.success(data.message)
-                } else {
-                    setUploadLoading(false)
-                    toast.error(data.message)
-                }
-            })
-        } catch (error) {
-            setLoading(false)
-            toast.error("Something went wrong")
-        }
-    }
+
+
     function handleAddNewSubject(e: FormEvent) {
         e.preventDefault();
         const id = params.pathname.split('/')[3]
@@ -537,29 +534,23 @@ const TeacherCourse = () => {
                 )
             }
             {
-                uploadScreen && (
-                    uploadLoading ? <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
+                newFolderScreen && (
+                    (<div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
                         <div className='rounded-lg shadow-md h-auto p-4 w-[30%] m-auto'>
-                            <p className='text-center font-bold text-lg'>Uploading...</p>
-                        </div>
-                    </div> : (<div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 rounded-lg'>
-                        <div className='rounded-lg shadow-md h-auto p-4 w-[30%] m-auto'>
-                            <form onSubmit={(e) => addNewContent(e)} className='flex flex-col p-4 bg-white w-full gap-4 rounded-lg'>
+                            <form onSubmit={(e) => addNewFolder(e, subjectUploadId)} className='flex flex-col p-4 bg-white w-full gap-4 rounded-lg'>
                                 <div className='flex w-full justify-between items-center'>
-                                    <h2 className='text-lg font-bold'>Create new course </h2>
-                                    <X onClick={() => setUploadScreen(false)} className='cursor-pointer' />
+                                    <h2 className='text-lg font-bold'>Create New Folder </h2>
+                                    <X onClick={() => setNewFolderScreen(false)} className='cursor-pointer' />
                                 </div>
                                 <div className='flex flex-col gap-2 items-baseline w-full'>
                                     <div className='w-full'>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Content Name</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Folder Name</label>
                                         <input
-                                            value={newContent.content_name}
+                                            value={newFolder.folder_name}
                                             onChange={(e) => {
-                                                setNewContent({
-                                                    ...newContent,
-                                                    content_name: e.target.value
+                                                setNewFolder({
+                                                    folder_name: e.target.value
                                                 })
-                                                console.log(subjectUploadId)
                                             }
                                             }
                                             type="text"
@@ -567,30 +558,8 @@ const TeacherCourse = () => {
                                             className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
-                                    <div className='w-full'>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">File type</label>
-                                        <input
-                                            value={newContent.type}
-                                            onChange={(e) => {
-                                                setNewContent({
-                                                    ...newContent,
-                                                    type: e.target.value
-                                                })
-                                            }}
-                                            type="text"
-                                            placeholder="Enter type of file..."
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        />
-                                    </div>
-                                    <div className='w-full'>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">File</label>
-                                        <input
-                                            onChange={(e) => { handleFile(e) }}
-                                            type="file"
-                                            placeholder="Choose a File"
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        />
-                                    </div>
+
+
                                     <button type="submit" className='w-full bg-black text-white p-2 rounded-lg'>Add new Content</button>
                                 </div>
                             </form>
@@ -598,7 +567,7 @@ const TeacherCourse = () => {
                     </div>)
                 )
             }
-            {
+            {/* {
                 loading ? <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                     Loading...
                 </div> : (<>
@@ -638,26 +607,16 @@ const TeacherCourse = () => {
                                             </div>
                                             <div className='flex flex-col w-full gap-2'>
                                                 <h2 className="text-lg p-1 text-transparent bg-clip-text font-bold" style={{ backgroundImage: "radial-gradient(98.0344% 98.0344% at 1.35135% 3.04878%, rgb(49, 46, 129) 0%, rgb(3, 7, 18) 100%)" }}>Current Content</h2>
-                                                {/* <div className='w-full flex gap-4 max-h-3xl mb-6 overflow-auto p-2 items-center'>
-                                                    {
-                                                        subjectContents.find(obj => obj.subject_id == subject.id)?.contents.map(object => {
-                                                            return (
-                                                                <ContentCard key={object.content_id} content_name={object.content_name} type={'PDF'} uploaded_on={'12-07-2025'} url={object.content_url} />
-                                                            )
-                                                        })
-                                                    }
-                                                </div> */}
+                                                
                                                 <div className="w-full grid grid-cols-3 gap-4 max-h-[500px] overflow-y-auto p-2">
                                                     {
-                                                        subjectContents.find(obj => obj.subject_id == subject.id)?.contents.map(object => {
+                                                        subjectFolders.find(obj => obj.subject_id == subject.id)?.folders.map(object => {
                                                             return (
-                                                                <ContentCard
-                                                                    key={object.content_id}
-                                                                    content_name={object.content_name}
-                                                                    type={'PDF'}
-                                                                    uploaded_on={'12-07-2025'}
-                                                                    url={object.content_url}
-                                                                />
+                                                                <div className='flex flex-col items-center gap-4 p-2'>
+                                                                    <CiFolderOn />
+                                                                    <p className='textx-lg font-lg text-stone-400'>{object.folder_name}</p>
+                                                                </div>
+                                                                
                                                             )
                                                         })
                                                     }
@@ -692,7 +651,127 @@ const TeacherCourse = () => {
                         </div>
                     </div>
                 </>)
-            }
+            } */}
+            {loading ? (
+                <div className="flex justify-center items-center h-[50vh]">
+                    <Loader className="animate-spin text-indigo-600 w-10 h-10" />
+                </div>
+            ) : (
+                <>
+                    {/* Header */}
+                    <header className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-40">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center h-16">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                                        <BookOpen className="w-6 h-6 text-white" />
+                                    </div>
+                                    <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Welcome, Mr. Himanshu Parnami</h1>
+                                </div>
+                                <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Batch Info */}
+                    <section className="max-w-7xl mt-8 mx-auto p-6 shadow-lg rounded-2xl bg-white mb-10">
+                        <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+                            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{batchName}</h1>
+                            <button
+                                onClick={() => setAddNewSubject(true)}
+                                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition"
+                            >
+                                Add Subject
+                            </button>
+                        </div>
+
+                        {/* Subjects */}
+                        <div className="grid gap-8 mt-8">
+                            {subjects.length === 0 ? (
+                                <div className="flex justify-center items-center text-lg font-semibold text-gray-600">
+                                    No subjects yet. Please add one.
+                                </div>
+                            ) : (
+                                subjects.map((subject) => (
+                                    <div
+                                        key={subject.id}
+                                        className="w-full shadow-md bg-gray-50 p-6 rounded-xl border border-gray-200 flex flex-col gap-6"
+                                    >
+                                        {/* Subject header */}
+                                        <h2 className="text-2xl font-semibold text-gray-800">{subject.subject_name}</h2>
+
+                                        {/* Folders */}
+                                        <div>
+                                            <h3 className="text-lg font-semibold text-gray-700 mb-4">Folders</h3>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                                {subjectFolders.find(obj => obj.subject_id == subject.id)?.folders.map(object => (
+                                                    <div
+                                                        key={object.folder_id}
+                                                        onClick={() => navigate(`/teacher/content/${subject.id}/${object.folder_id}`)}
+                                                        className="flex flex-col items-center p-4 rounded-xl bg-white shadow hover:shadow-lg cursor-pointer transition"
+                                                    >
+                                                        <CiFolderOn className="text-4xl text-indigo-500" />
+                                                        <p className="text-sm font-medium text-gray-600 mt-2">{object.folder_name}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="flex flex-wrap gap-3">
+                                            <button
+                                                onClick={() => navigate(`/teacher/test/${subject.batchId}/${subject.id}`)}
+                                                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium shadow transition"
+                                            >
+                                                Tests
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setIsStudentModal(true)
+                                                    fetchStudents(subject.batchId, subject.id)
+                                                    setSelectedSubjectId(subject.id)
+                                                }}
+                                                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium shadow transition"
+                                            >
+                                                Students
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setAddTestModal(true)
+                                                    setSelectedSubjectId(subject.id)
+                                                }}
+                                                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium shadow transition"
+                                            >
+                                                Add Test
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setNewFolderScreen(true)
+                                                    setSubjectUploadId(subject.id)
+                                                }}
+                                                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium shadow transition"
+                                            >
+                                                Add Folder
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setIsAiModalOpen(true)
+                                                    localStorage.setItem('aiScreen', 'true')
+                                                }}
+                                                className="flex items-center gap-2 px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium shadow transition"
+                                            >
+                                                <Brain className="w-5 h-5" /> AI Assistant
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </section>
+                </>
+            )}
         </div>
     )
 }

@@ -283,6 +283,7 @@ import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import SlotMangement from "./SlotManagement"
 
+
 interface Subject {
   id: number,
   subject_name: string,

@@ -19,6 +19,8 @@ import DoubtForm from './components/students/SlotBooking'
 import Thanks from './components/common/Thanks'
 import WeekManagement from './components/teacher/WeekManagement'
 import TeacherSignup from './components/teacher/TeacherSignup'
+import FolderNotes from './components/common/FolderNotes'
+import MyPdfPage from './components/students/PdfPage'
 
 
 
@@ -42,6 +44,9 @@ function App() {
       <Route path='/thanks/:doubtId' element={<Thanks />} />
       <Route path='/teacher/week/:weekId' element={<WeekManagement />} />
       <Route path='/teacher/signup' element={<TeacherSignup />} />
+      <Route path='/teacher/content/:subjectId/:folderId' element={<FolderNotes account='teacher' />} />
+      <Route path='/student/content/:subjectId/:folderId' element={<FolderNotes account='student' />} />
+      <Route path='/student/pdf' element={<MyPdfPage />} />
     </Routes>
   )
 }

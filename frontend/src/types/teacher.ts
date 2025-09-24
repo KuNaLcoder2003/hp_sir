@@ -23,6 +23,13 @@ export interface AIChat {
     message: string,
 }
 
+export interface Folder {
+    id: number,
+    folder_name: string,
+    batch_id: number,
+    subject_id: number,
+}
+
 
 export interface Content {
     id: number,
@@ -43,6 +50,18 @@ export interface newContent {
     content_name: string,
     type: string,
     content: File[]
+}
+
+export interface Fold {
+    folder_id: number,
+    folder_name: string
+}
+
+export interface SubjectFolders {
+    subject_id: number,
+    subject_name: string,
+    folders: Fold[]
+
 }
 
 export interface SubjectContents {
