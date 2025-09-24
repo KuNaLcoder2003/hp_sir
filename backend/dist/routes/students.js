@@ -119,6 +119,57 @@ student_router.get('/details', studentMiddleWare_1.studentMiddleWare, (req, res)
         });
     }
 }));
+student_router.get('/content/:subjectId/:folderId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const subjectId = req.params.subjectId;
+        const folderId = req.params.folderId;
+        if (!subjectId || !folderId) {
+            res.status(400).json({
+                message: 'Bad request'
+            });
+            return;
+        }
+        const subject = yield prisma.subjects.findFirst({
+            where: { id: Number(subjectId) }
+        });
+        if (!subject) {
+            res.status(404).json({
+                message: 'No subject found'
+            });
+            return;
+        }
+        const folder = yield prisma.folder.findFirst({
+            where: { id: Number(folderId) }
+        });
+        if (!folder) {
+            res.status(404).json({
+                message: 'Folder not found'
+            });
+            return;
+        }
+        const content = yield prisma.content.findMany({
+            where: {
+                subjectId: Number(subjectId),
+                folder_id: Number(folderId)
+            }
+        });
+        if (!content) {
+            res.status(404).json({
+                message: 'Folder not found'
+            });
+            return;
+        }
+        res.status(200).json({
+            content
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
 student_router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { first_name, last_name, email, password, batch } = req.body;
@@ -247,15 +298,15 @@ student_router.get('/subjectDetails/:id', studentMiddleWare_1.studentMiddleWare,
             });
             return;
         }
-        const content = yield prisma.content.findMany({
+        const folders = yield prisma.folder.findMany({
             where: {
-                subjectId: subject.id
+                subject_id: Number(id)
             }
         });
         res.status(200).json({
             student_name: `${student === null || student === void 0 ? void 0 : student.first_name} ${student === null || student === void 0 ? void 0 : student.last_name}`,
             subject,
-            content
+            folders
         });
     }
     catch (error) {

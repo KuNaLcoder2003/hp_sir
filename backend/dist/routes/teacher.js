@@ -20,11 +20,21 @@ const cloudinary_1 = require("../functions/cloudinary");
 const generateToken_1 = require("../functions/generateToken");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const mail_1 = require("../functions/mail");
-const crypto_hash_1 = require("crypto-hash");
 const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({ storage: storage });
 const teacher_router = express_1.default.Router();
 const salts = 10;
+function toHash(string) {
+    let hash = 0;
+    if (string.length == 0)
+        return hash;
+    for (let i = 0; i < string.length; i++) {
+        let char = string.charCodeAt(i);
+        hash = ((hash << 5) + hash) + char;
+        hash = hash & hash;
+    }
+    return Math.abs(hash);
+}
 teacher_router.get('/student/:batchid/:subjectId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const batchId = req.params.batchid;
     const subjectId = req.params.subjectId;
@@ -128,20 +138,21 @@ teacher_router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, f
             });
             return;
         }
-        const teacher_code = yield (0, crypto_hash_1.sha256)(`${email} ${first_name}`);
-        if (!teacher_code) {
-            res.status(400).json({
-                message: 'Error creating account'
-            });
-            return;
-        }
+        // const teacher_code = await sha256(`${email} ${first_name}`)
+        // if (!teacher_code) {
+        //     res.status(400).json({
+        //         message: 'Error creating account'
+        //     })
+        //     return
+        // }
+        const teacher_code = toHash(`${email} ${first_name}`);
         const new_teacher = yield prisma.teacher.create({
             data: {
                 first_name: first_name,
                 last_name: last_name,
                 email: email,
                 password: hashedPassword,
-                teacher_code: teacher_code
+                teacher_code: `${teacher_code}`
             }
         });
         if (!new_teacher) {
@@ -401,17 +412,88 @@ teacher_router.get('/course/:courseId', (req, res) => __awaiter(void 0, void 0, 
         const ids = subjects.map((obj) => {
             return obj.id;
         });
-        const content = yield prisma.content.findMany({
+        // const content = await prisma.content.findMany({
+        //     where: {
+        //         subjectId: {
+        //             in: ids
+        //         }
+        //     }
+        // })
+        const folders = yield prisma.folder.findMany({
             where: {
-                subjectId: {
+                subject_id: {
                     in: ids
                 }
             }
         });
         res.status(200).json({
             batch_name: course.batch_name,
-            content,
+            folders,
             subjects
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
+teacher_router.post('/createFolder/:subjectId/:batchId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { folder_name } = req.body.folder_deatils;
+        const batchId = req.params.batchId;
+        const subjectId = req.params.subjectId;
+        if (!batchId || !subjectId) {
+            res.status(400).json({
+                message: 'Bad request'
+            });
+            return;
+        }
+        const batch = yield prisma.batch.findFirst({
+            where: {
+                id: Number(batchId)
+            }
+        });
+        if (!batch) {
+            res.status(402).json({
+                message: 'Batch does not exists'
+            });
+            return;
+        }
+        const subject = yield prisma.subjects.findFirst({
+            where: {
+                id: Number(subjectId)
+            }
+        });
+        if (!subject) {
+            res.status(402).json({
+                message: 'Subject does not exists'
+            });
+            return;
+        }
+        if (!folder_name) {
+            res.status(402).json({
+                message: 'Can not create a foder with empty name'
+            });
+            return;
+        }
+        const new_folder = yield prisma.folder.create({
+            data: {
+                folder_name: folder_name,
+                batch_id: Number(batchId),
+                subject_id: Number(subjectId)
+            }
+        });
+        if (!new_folder) {
+            res.status(402).json({
+                message: 'Unable to create folder'
+            });
+            return;
+        }
+        res.status(200).json({
+            valid: true,
+            message: 'Successfully created folder'
         });
     }
     catch (error) {
@@ -491,12 +573,13 @@ teacher_router.post("/subject/:batchId", (req, res) => __awaiter(void 0, void 0,
         });
     }
 }));
-teacher_router.post('/content/:subjectId', upload.single('content'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+teacher_router.post('/content/:subjectId/:folderId', upload.single('content'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const subjectId = req.params.subjectId;
+    const folderId = req.params.folderId;
     const { content_name, type } = req.body;
     const file = req.file;
     try {
-        if (!subjectId) {
+        if (!subjectId || !folderId) {
             res.status(400).json({
                 message: 'Bad request'
             });
@@ -518,7 +601,7 @@ teacher_router.post('/content/:subjectId', upload.single('content'), (req, res) 
             return;
         }
         const buffer = Buffer.from(file.buffer);
-        const result = yield (0, cloudinary_1.uploadOnCloud)(buffer, "class_content", "auto");
+        const result = yield (0, cloudinary_1.uploadOnCloud)(buffer, "class_content", "raw");
         if (!result.valid) {
             res.status(400).json({
                 message: 'Error uploading content'
@@ -531,7 +614,8 @@ teacher_router.post('/content/:subjectId', upload.single('content'), (req, res) 
                 type: type,
                 content_url: result.url,
                 subjectId: Number(subjectId),
-                uploaded_on: new Date()
+                uploaded_on: new Date(),
+                folder_id: Number(folderId)
             }
         });
         if (!new_content) {

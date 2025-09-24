@@ -62,6 +62,8 @@ model Content {
   content_url  String
   type         String
   uploaded_on  DateTime @default(now())
+  folder_id Int
+  folder Folder @relation(fields: [folder_id] , references: [id])
 }
 
 model StudentSubjects {
@@ -116,7 +118,7 @@ model Files {
   subject_id Int
   subject Subjects @relation(fields: [subject_id] , references: [id])
   folder_id Int
-  folder Folder @relation(fields: [folder_id] , references: [id])
+  
 }
 
 model Doubts {
@@ -177,6 +179,6 @@ model Folder {
   batch Batch @relation(fields: [batch_id] , references: [id])
   subject_id Int
   subject Subjects @relation(fields: [subject_id] , references: [id])
-  files Files[]
+  content Content[]
 }
 

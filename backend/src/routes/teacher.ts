@@ -416,18 +416,95 @@ teacher_router.get('/course/:courseId', async (req: express.Request, res: expres
         const ids = subjects.map((obj) => {
             return obj.id
         })
-        const content = await prisma.content.findMany({
+        // const content = await prisma.content.findMany({
+        //     where: {
+        //         subjectId: {
+        //             in: ids
+        //         }
+        //     }
+        // })
+        const folders = await prisma.folder.findMany({
             where: {
-                subjectId: {
+                subject_id: {
                     in: ids
                 }
             }
         })
         res.status(200).json({
             batch_name: course.batch_name,
-            content,
+            folders,
             subjects
         })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+
+teacher_router.post('/createFolder/:subjectId/:batchId', async (req: any, res: express.Response) => {
+    try {
+        const { folder_name } = req.body.folder_deatils;
+        const batchId = req.params.batchId;
+        const subjectId = req.params.subjectId
+
+        if (!batchId || !subjectId) {
+            res.status(400).json({
+                message: 'Bad request'
+            })
+            return
+        }
+        const batch = await prisma.batch.findFirst({
+            where: {
+                id: Number(batchId)
+            }
+        })
+        if (!batch) {
+            res.status(402).json({
+                message: 'Batch does not exists'
+            })
+            return
+        }
+
+        const subject = await prisma.subjects.findFirst({
+            where: {
+                id: Number(subjectId)
+            }
+        })
+
+        if (!subject) {
+            res.status(402).json({
+                message: 'Subject does not exists'
+            })
+            return
+        }
+
+        if (!folder_name) {
+            res.status(402).json({
+                message: 'Can not create a foder with empty name'
+            })
+            return
+        }
+
+        const new_folder = await prisma.folder.create({
+            data: {
+                folder_name: folder_name,
+                batch_id: Number(batchId),
+                subject_id: Number(subjectId)
+            }
+        })
+        if (!new_folder) {
+            res.status(402).json({
+                message: 'Unable to create folder'
+            })
+            return
+        }
+        res.status(200).json({
+            valid: true,
+            message: 'Successfully created folder'
+        })
+
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -507,12 +584,13 @@ teacher_router.post("/subject/:batchId", async (req: express.Request, res: expre
     }
 })
 
-teacher_router.post('/content/:subjectId', upload.single('content'), async (req: express.Request, res: express.Response) => {
+teacher_router.post('/content/:subjectId/:folderId', upload.single('content'), async (req: express.Request, res: express.Response) => {
     const subjectId = req.params.subjectId
+    const folderId = req.params.folderId;
     const { content_name, type } = req.body
     const file = req.file as Express.Multer.File
     try {
-        if (!subjectId) {
+        if (!subjectId || !folderId) {
             res.status(400).json({
                 message: 'Bad request'
             })
@@ -534,7 +612,7 @@ teacher_router.post('/content/:subjectId', upload.single('content'), async (req:
             return
         }
         const buffer = Buffer.from(file.buffer)
-        const result = await uploadOnCloud(buffer, "class_content", "auto")
+        const result = await uploadOnCloud(buffer, "class_content", "raw")
         if (!result.valid) {
             res.status(400).json({
                 message: 'Error uploading content'
@@ -547,7 +625,8 @@ teacher_router.post('/content/:subjectId', upload.single('content'), async (req:
                 type: type,
                 content_url: result.url,
                 subjectId: Number(subjectId),
-                uploaded_on: new Date()
+                uploaded_on: new Date(),
+                folder_id: Number(folderId)
             }
         })
         if (!new_content) {

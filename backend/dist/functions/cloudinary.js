@@ -16,11 +16,12 @@ function uploadOnCloud(buffer, folder_name, type) {
         const result = cloud.uploader.upload_stream({
             folder: folder_name,
             resource_type: type,
+            // type: "private"
         }, (error, res) => {
             if (error)
                 reject({ valid: false, error: error, url: "" });
             else
-                resolve({ valid: true, url: (res === null || res === void 0 ? void 0 : res.secure_url) || "" });
+                resolve({ valid: true, url: (res === null || res === void 0 ? void 0 : res.secure_url) || "", public_id: `${res === null || res === void 0 ? void 0 : res.public_id}` });
         });
         result.end(buffer);
     });

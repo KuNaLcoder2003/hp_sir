@@ -21,7 +21,7 @@ export function uploadOnCloud(buffer: Buffer, folder_name: string, type: ("video
         const result = cloud.uploader.upload_stream({
             folder: folder_name,
             resource_type: type,
-            type: "private"
+            // type: "private"
         },
             (error, res) => {
                 if (error) reject({ valid: false, error: error, url: "" })

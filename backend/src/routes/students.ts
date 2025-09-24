@@ -125,6 +125,57 @@ student_router.get('/details', studentMiddleWare, async (req: any, res: express.
         })
     }
 })
+
+student_router.get('/content/:subjectId/:folderId', async (req: any, res: express.Response) => {
+    try {
+        const subjectId = req.params.subjectId
+        const folderId = req.params.folderId;
+        if (!subjectId || !folderId) {
+            res.status(400).json({
+                message: 'Bad request'
+            })
+            return
+        }
+        const subject = await prisma.subjects.findFirst({
+            where: { id: Number(subjectId) }
+        })
+        if (!subject) {
+            res.status(404).json({
+                message: 'No subject found'
+            })
+            return
+        }
+        const folder = await prisma.folder.findFirst({
+            where: { id: Number(folderId) }
+        })
+        if (!folder) {
+            res.status(404).json({
+                message: 'Folder not found'
+            })
+            return
+        }
+        const content = await prisma.content.findMany({
+            where: {
+                subjectId: Number(subjectId),
+                folder_id: Number(folderId)
+            }
+        })
+        if (!content) {
+            res.status(404).json({
+                message: 'Folder not found'
+            })
+            return
+        }
+        res.status(200).json({
+            content
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
 student_router.post('/register', async (req: express.Request, res: express.Response) => {
     try {
         const { first_name, last_name, email, password, batch } = req.body as New_Registration;
@@ -254,15 +305,15 @@ student_router.get('/subjectDetails/:id', studentMiddleWare, async (req: any, re
             })
             return
         }
-        const content = await prisma.content.findMany({
+        const folders = await prisma.folder.findMany({
             where: {
-                subjectId: subject.id
+                subject_id: Number(id)
             }
         })
         res.status(200).json({
             student_name: `${student?.first_name} ${student?.last_name}`,
             subject,
-            content
+            folders
         })
     } catch (error) {
         console.log(error)
