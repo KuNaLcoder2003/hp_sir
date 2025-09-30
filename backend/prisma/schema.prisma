@@ -62,8 +62,8 @@ model Content {
   content_url  String
   type         String
   uploaded_on  DateTime @default(now())
-  folder_id Int
-  folder Folder @relation(fields: [folder_id] , references: [id])
+  sub_folder_id Int
+  subFolder SubFolders @relation(fields: [sub_folder_id] , references: [id])
 }
 
 model StudentSubjects {
@@ -121,6 +121,28 @@ model Files {
   
 }
 
+model Videos {
+  id           Int      @id @unique @default(autoincrement())
+  video_name String   @db.VarChar(200)
+  content_url  String
+  type         String
+  uploaded_on  DateTime @default(now())
+  sub_folder_id Int
+  subFolder SubFolders @relation(fields: [sub_folder_id] , references: [id])
+}
+
+model SubFolders {
+  id           Int      @id @unique @default(autoincrement())
+  subfolder_name String   @db.VarChar(200)
+  subjectId    Int
+  type         String
+  uploaded_on  DateTime @default(now())
+  folder_id Int
+  folder Folder @relation(fields: [folder_id] , references: [id])
+  videos Videos[]
+  content Content[]
+}
+
 model Doubts {
   id         Int               @id @unique @default(autoincrement())
   user_email String @db.VarChar(200)
@@ -135,6 +157,8 @@ model Doubts {
   slot Slot @relation(fields: [slot_id] , references: [id])
   hashed_id String @default("")
 }
+
+
 model Meeting {
   id         Int               @id @unique @default(autoincrement())
   meeting_id String @default("")
@@ -179,6 +203,6 @@ model Folder {
   batch Batch @relation(fields: [batch_id] , references: [id])
   subject_id Int
   subject Subjects @relation(fields: [subject_id] , references: [id])
-  content Content[]
+  subFolders SubFolders[]
 }
 
