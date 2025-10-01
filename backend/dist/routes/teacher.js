@@ -573,13 +573,13 @@ teacher_router.post("/subject/:batchId", (req, res) => __awaiter(void 0, void 0,
         });
     }
 }));
-teacher_router.post('/content/:subjectId/:folderId', upload.single('content'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+teacher_router.post('/content/:subjectId/:sub_folder_id ', upload.single('content'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const subjectId = req.params.subjectId;
-    const folderId = req.params.folderId;
+    const sub_folder_id = req.params.sub_folder_id;
     const { content_name, type } = req.body;
     const file = req.file;
     try {
-        if (!subjectId || !folderId) {
+        if (!subjectId || !sub_folder_id) {
             res.status(400).json({
                 message: 'Bad request'
             });
@@ -615,7 +615,7 @@ teacher_router.post('/content/:subjectId/:folderId', upload.single('content'), (
                 content_url: result.url,
                 subjectId: Number(subjectId),
                 uploaded_on: new Date(),
-                folder_id: Number(folderId)
+                sub_folder_id: Number(sub_folder_id)
             }
         });
         if (!new_content) {
@@ -627,6 +627,57 @@ teacher_router.post('/content/:subjectId/:folderId', upload.single('content'), (
         res.status(200).json({
             message: 'Succesfully uploaded!',
             new_content,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
+teacher_router.post('/createSubFolder/:folderId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { sub_folder_name } = req.body.folder_deatils;
+        const folderId = req.params.folderId;
+        if (!folderId) {
+            res.status(400).json({
+                message: 'Bad request'
+            });
+            return;
+        }
+        const folder = yield prisma.folder.findFirst({
+            where: {
+                id: Number(folderId)
+            }
+        });
+        if (!folder) {
+            res.status(402).json({
+                message: 'Batch does not exists'
+            });
+            return;
+        }
+        if (!sub_folder_name) {
+            res.status(402).json({
+                message: 'Can not create a foder with empty name'
+            });
+            return;
+        }
+        const new_folder = yield prisma.subFolders.create({
+            data: {
+                folder_id: Number(folderId),
+                subfolder_name: sub_folder_name
+            }
+        });
+        if (!new_folder) {
+            res.status(402).json({
+                message: 'Unable to create folder'
+            });
+            return;
+        }
+        res.status(200).json({
+            valid: true,
+            message: 'Successfully created folder'
         });
     }
     catch (error) {

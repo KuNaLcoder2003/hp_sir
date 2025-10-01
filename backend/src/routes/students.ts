@@ -126,22 +126,59 @@ student_router.get('/details', studentMiddleWare, async (req: any, res: express.
     }
 })
 
-student_router.get('/content/:subjectId/:folderId', async (req: any, res: express.Response) => {
+student_router.get('/subFolders/:folderId', async (req: any, res: express.Response) => {
     try {
-        const subjectId = req.params.subjectId
         const folderId = req.params.folderId;
-        if (!subjectId || !folderId) {
+        if (!folderId) {
             res.status(400).json({
                 message: 'Bad request'
             })
             return
         }
-        const subject = await prisma.subjects.findFirst({
-            where: { id: Number(subjectId) }
+        const folder = await prisma.folder.findFirst({
+            where: { id: Number(folderId) }
         })
-        if (!subject) {
+        if (!folder) {
             res.status(404).json({
-                message: 'No subject found'
+                message: 'Folder not found'
+            })
+            return
+        }
+        const subFolders = await prisma.subFolders.findMany({
+            where: {
+                folder_id: Number(folderId)
+            }
+        })
+
+        res.status(200).json({
+            subFolders
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+
+student_router.get('/content/:folderId/:subFolderId', async (req: any, res: express.Response) => {
+    try {
+        const subFolderId = req.params.subFolderId
+        const folderId = req.params.folderId;
+        if (!subFolderId || !folderId) {
+            res.status(400).json({
+                message: 'Bad request'
+            })
+            return
+        }
+        const subFolder = await prisma.subFolders.findFirst({
+            where: { id: Number(subFolderId) }
+        })
+        if (!subFolder) {
+            res.status(404).json({
+                message: 'No subfolder found'
             })
             return
         }
@@ -156,8 +193,7 @@ student_router.get('/content/:subjectId/:folderId', async (req: any, res: expres
         }
         const content = await prisma.content.findMany({
             where: {
-                subjectId: Number(subjectId),
-                folder_id: Number(folderId)
+                sub_folder_id: Number(subFolderId)
             }
         })
         if (!content) {

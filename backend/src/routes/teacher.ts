@@ -7,7 +7,6 @@ import { uploadOnCloud } from "../functions/cloudinary";
 import { generateToken } from "../functions/generateToken";
 import bcrypt from "bcrypt"
 import { sendMail } from "../functions/mail";
-import { sha256 } from "crypto-hash";
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const teacher_router = express.Router();
@@ -17,7 +16,6 @@ interface NewBatch {
     batch_name: string,
     duration: number
 }
-
 
 function toHash(string: string): number {
 
@@ -30,7 +28,6 @@ function toHash(string: string): number {
         hash = ((hash << 5) + hash) + char;
         hash = hash & hash;
     }
-
     return Math.abs(hash)
 }
 
@@ -584,13 +581,13 @@ teacher_router.post("/subject/:batchId", async (req: express.Request, res: expre
     }
 })
 
-teacher_router.post('/content/:subjectId/:folderId', upload.single('content'), async (req: express.Request, res: express.Response) => {
+teacher_router.post('/content/:subjectId/:sub_folder_id ', upload.single('content'), async (req: express.Request, res: express.Response) => {
     const subjectId = req.params.subjectId
-    const folderId = req.params.folderId;
+    const sub_folder_id = req.params.sub_folder_id;
     const { content_name, type } = req.body
     const file = req.file as Express.Multer.File
     try {
-        if (!subjectId || !folderId) {
+        if (!subjectId || !sub_folder_id) {
             res.status(400).json({
                 message: 'Bad request'
             })
@@ -626,7 +623,7 @@ teacher_router.post('/content/:subjectId/:folderId', upload.single('content'), a
                 content_url: result.url,
                 subjectId: Number(subjectId),
                 uploaded_on: new Date(),
-                folder_id: Number(folderId)
+                sub_folder_id: Number(sub_folder_id)
             }
         })
         if (!new_content) {
@@ -639,6 +636,62 @@ teacher_router.post('/content/:subjectId/:folderId', upload.single('content'), a
             message: 'Succesfully uploaded!',
             new_content,
         })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+
+teacher_router.post('/createSubFolder/:folderId', async (req: any, res: express.Response) => {
+    try {
+        const { sub_folder_name } = req.body.folder_deatils;
+        const folderId = req.params.folderId;
+
+        if (!folderId) {
+            res.status(400).json({
+                message: 'Bad request'
+            })
+            return
+        }
+        const folder = await prisma.folder.findFirst({
+            where: {
+                id: Number(folderId)
+            }
+        })
+        if (!folder) {
+            res.status(402).json({
+                message: 'Batch does not exists'
+            })
+            return
+        }
+
+
+        if (!sub_folder_name) {
+            res.status(402).json({
+                message: 'Can not create a foder with empty name'
+            })
+            return
+        }
+
+        const new_folder = await prisma.subFolders.create({
+            data: {
+                folder_id: Number(folderId),
+                subfolder_name: sub_folder_name
+            }
+        })
+        if (!new_folder) {
+            res.status(402).json({
+                message: 'Unable to create folder'
+            })
+            return
+        }
+        res.status(200).json({
+            valid: true,
+            message: 'Successfully created folder'
+        })
+
     } catch (error) {
         console.log(error)
         res.status(500).json({

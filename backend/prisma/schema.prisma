@@ -134,8 +134,6 @@ model Videos {
 model SubFolders {
   id           Int      @id @unique @default(autoincrement())
   subfolder_name String   @db.VarChar(200)
-  subjectId    Int
-  type         String
   uploaded_on  DateTime @default(now())
   folder_id Int
   folder Folder @relation(fields: [folder_id] , references: [id])

@@ -119,22 +119,56 @@ student_router.get('/details', studentMiddleWare_1.studentMiddleWare, (req, res)
         });
     }
 }));
-student_router.get('/content/:subjectId/:folderId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+student_router.get('/subFolders/:folderId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const subjectId = req.params.subjectId;
         const folderId = req.params.folderId;
-        if (!subjectId || !folderId) {
+        if (!folderId) {
             res.status(400).json({
                 message: 'Bad request'
             });
             return;
         }
-        const subject = yield prisma.subjects.findFirst({
-            where: { id: Number(subjectId) }
+        const folder = yield prisma.folder.findFirst({
+            where: { id: Number(folderId) }
         });
-        if (!subject) {
+        if (!folder) {
             res.status(404).json({
-                message: 'No subject found'
+                message: 'Folder not found'
+            });
+            return;
+        }
+        const subFolders = yield prisma.subFolders.findMany({
+            where: {
+                folder_id: Number(folderId)
+            }
+        });
+        res.status(200).json({
+            subFolders
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
+student_router.get('/content/:folderId/:subFolderId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const subFolderId = req.params.subFolderId;
+        const folderId = req.params.folderId;
+        if (!subFolderId || !folderId) {
+            res.status(400).json({
+                message: 'Bad request'
+            });
+            return;
+        }
+        const subFolder = yield prisma.subFolders.findFirst({
+            where: { id: Number(subFolderId) }
+        });
+        if (!subFolder) {
+            res.status(404).json({
+                message: 'No subfolder found'
             });
             return;
         }
@@ -149,8 +183,7 @@ student_router.get('/content/:subjectId/:folderId', (req, res) => __awaiter(void
         }
         const content = yield prisma.content.findMany({
             where: {
-                subjectId: Number(subjectId),
-                folder_id: Number(folderId)
+                sub_folder_id: Number(subFolderId)
             }
         });
         if (!content) {
