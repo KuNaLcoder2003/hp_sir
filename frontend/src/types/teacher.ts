@@ -30,6 +30,13 @@ export interface Folder {
     subject_id: number,
 }
 
+export interface SubFolder {
+    id: number
+    subfolder_name: string
+    uploaded_on: string
+    folder_id: number
+}
+
 
 export interface Content {
     id: number,

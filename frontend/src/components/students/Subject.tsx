@@ -247,7 +247,7 @@
 
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import StudentNavbar from "./StudentNavbar";
 import { CiFolderOn } from "react-icons/ci";
 
@@ -266,6 +266,7 @@ const Subject: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [permitted, setIsPermitted] = useState<boolean>(false);
     const [message, setMessage] = useState<string>("");
+    const navigate = useNavigate()
 
     useEffect(() => {
         const id = path.pathname.split("/")[2];
@@ -338,6 +339,7 @@ const Subject: React.FC = () => {
                                 {folder.map((object) => (
                                     <div
                                         key={object.id}
+                                        onClick={() => navigate(`/student/content/${object.subject_id}/${object.id}`)}
                                         className="group p-8 rounded-2xl bg-white/70 backdrop-blur-md shadow-md hover:shadow-2xl border border-gray-200 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center hover:-translate-y-1 hover:scale-[1.03]"
                                     >
                                         <CiFolderOn className="text-6xl text-indigo-500 group-hover:text-indigo-700 transition mb-4" />

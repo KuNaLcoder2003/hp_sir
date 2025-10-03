@@ -445,7 +445,7 @@ const StudentDashboard: React.FC = () => {
                                             className="w-20 h-20 mb-6 opacity-70"
                                         />
                                         <p className="text-gray-600 text-lg">
-                                            No subjects registered yet. Check back later 📚
+                                            No subjects registered yet. Check back later
                                         </p>
                                     </div>
                                 )}
