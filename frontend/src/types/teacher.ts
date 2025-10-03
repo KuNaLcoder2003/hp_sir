@@ -35,6 +35,7 @@ export interface SubFolder {
     subfolder_name: string
     uploaded_on: string
     folder_id: number
+    type: string
 }
 
 

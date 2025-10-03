@@ -279,7 +279,7 @@ const Signin: React.FC = () => {
                             New student?{" "}
                             <span
                                 className="text-indigo-600 hover:underline cursor-pointer"
-                                onClick={() => navigate('/register/student')}
+                                onClick={() => navigate('/register')}
                             >
                                 Sign up
                             </span>

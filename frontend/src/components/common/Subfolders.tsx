@@ -46,7 +46,10 @@ const SubFolders: React.FC<{ account: string }> = ({ account }) => {
     }
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-    const [newFolder, setNewFolder] = useState<string>("")
+    const [newFolder, setNewFolder] = useState({
+        folder_name: '',
+        type: ''
+    })
 
 
 
@@ -55,16 +58,14 @@ const SubFolders: React.FC<{ account: string }> = ({ account }) => {
 
         const folderId = params.pathname.split('/').at(-1)
         try {
-
-
-
             fetch('http://localhost:3000/api/v1/teacher/createSubFolder/' + `${folderId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    sub_folder_name: newFolder
+                    sub_folder_name: newFolder.folder_name,
+                    type: newFolder.type
                 })
             }).then(async (response: Response) => {
                 const data = await response.json()
@@ -98,12 +99,30 @@ const SubFolders: React.FC<{ account: string }> = ({ account }) => {
                                         <div className='w-full'>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">Folder Name</label>
                                             <input
-                                                value={newFolder}
+                                                value={newFolder.folder_name}
                                                 onChange={(e) => {
-                                                    setNewFolder(e.target.value)
+                                                    setNewFolder({
+                                                        ...newFolder,
+                                                        folder_name: e.target.value
+                                                    })
                                                 }}
                                                 type="text"
                                                 placeholder="Enter content name..."
+                                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            />
+                                        </div>
+                                        <div className='w-full'>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Folder Type</label>
+                                            <input
+                                                value={newFolder.type}
+                                                onChange={(e) => {
+                                                    setNewFolder({
+                                                        ...newFolder,
+                                                        type: e.target.value
+                                                    })
+                                                }}
+                                                type="text"
+                                                placeholder="notes or videos or tests"
                                                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             />
                                         </div>
@@ -160,7 +179,7 @@ const SubFolders: React.FC<{ account: string }> = ({ account }) => {
                                 <div
                                     key={obj.id}
                                     // onClick={() => navigate(`/student/pdf?url=${encodeURIComponent(obj.content_url)}`)}
-                                    onClick={() => navigate(`/${account}/notes/${obj.folder_id}/${obj.id}`)}
+                                    onClick={() => navigate(`/${account}/${obj.type}/${obj.folder_id}/${obj.id}`)}
                                     className="flex flex-col items-start p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition cursor-pointer"
                                 >
                                     <CiFileOn className="text-4xl text-indigo-500 mb-2" />

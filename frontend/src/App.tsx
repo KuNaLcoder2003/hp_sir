@@ -20,8 +20,7 @@ import WeekManagement from './components/teacher/WeekManagement'
 import TeacherSignup from './components/teacher/TeacherSignup'
 import SubFolders from './components/common/Subfolders'
 import Notes from './components/common/Notes'
-
-
+import Videos from './components/common/Videos'
 
 
 function App() {
@@ -45,9 +44,11 @@ function App() {
       <Route path='/teacher/week/:weekId' element={<WeekManagement />} />
       <Route path='/teacher/signup' element={<TeacherSignup />} />
       <Route path='/teacher/content/:subjectId/:folderId/' element={<SubFolders account='teacher' />} />
-      <Route path='/student/content/:subjectId/:folderId/' element={<SubFolders account='student' />} />
+      <Route path='/student/content/:subjectId/:folderId/' element={loggedIn ? <SubFolders account='student' /> : <LandingPage />} />
       <Route path='/teacher/notes/:folderId/:subFolderId' element={<Notes account='teacher' />} />
-      <Route path='/student/notes/:folderId/:folderId/' element={<Notes account='student' />} />
+      <Route path='/student/notes/:folderId/:folderId/' element={loggedIn ? <Notes account='student' /> : <LandingPage />} />
+      <Route path='/teacher/videos/:folderId/:subFolderId' element={<Videos account='teacher' />} />
+      <Route path='/student/videos/:folderId/:folderId/' element={loggedIn ? <Videos account='student' /> : <LandingPage />} />
     </Routes>
   )
 }

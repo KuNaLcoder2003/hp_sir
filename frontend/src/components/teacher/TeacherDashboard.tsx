@@ -430,46 +430,58 @@ const TeacherDashboard = () => {
     return (
       <div
         onClick={() => navigate(`/teacher/course/${batch_id}`)}
-        className="p-6 w-[95%] sm:w-[80%] md:w-[70%] lg:w-[45%] xl:w-[40%] 
-          m-auto mb-8 bg-white/70 backdrop-blur-md 
-          border border-gray-200/50 shadow-lg rounded-2xl 
-          hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer"
+        className="p-6 w-[95%] sm:w-[80%] md:w-[65%] lg:w-[45%] xl:w-[40%] 
+        m-auto mb-8 bg-white/80 backdrop-blur-lg 
+        border border-gray-100 shadow-lg rounded-2xl 
+        hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer"
       >
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
           {/* Header */}
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-md">
-              <BookOpen size={24} />
+              <BookOpen size={22} />
             </div>
-            <h2 className="text-xl font-extrabold text-gray-800 bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(to right, #4338CA, #1E1B4B)" }}>
+            <h2
+              className="text-xl font-extrabold bg-clip-text text-transparent"
+              style={{ backgroundImage: "linear-gradient(to right, #4338CA, #1E1B4B)" }}
+            >
               {batch_name}
             </h2>
           </div>
 
           {/* Info Section */}
-          <div className="flex flex-col gap-3 text-gray-600 text-sm">
-            <div className="flex items-center gap-2">
-              <User2Icon size={18} className="text-indigo-500" />
-              <span className="font-semibold">Subjects:</span>
-              <div className="flex flex-wrap gap-2">
-                {subjects.length === 0
-                  ? <span className="text-gray-400">No subjects added yet</span>
-                  : subjects.map((subject) => (
-                    <span key={subject.id} className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full shadow-sm">
+          <div className="flex flex-col gap-4 text-gray-600 text-sm">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <User2Icon size={18} className="text-indigo-500" />
+                <span className="font-semibold">Subjects:</span>
+              </div>
+              <div className="flex flex-wrap gap-2 pl-6">
+                {subjects.length === 0 ? (
+                  <span className="text-gray-400 italic">No subjects added yet</span>
+                ) : (
+                  subjects.map((subject) => (
+                    <span
+                      key={subject.id}
+                      className="px-2.5 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full shadow-sm"
+                    >
                       {subject.subject_name}
                     </span>
                   ))
-                }
+                )}
               </div>
             </div>
+
             <div className="flex items-center gap-2">
               <Clock size={18} className="text-indigo-500" />
-              <span className="font-semibold">Duration:</span> {12} months
+              <span className="font-semibold">Duration:</span>
+              <span className="text-gray-700">12 months</span>
             </div>
+
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="font-semibold">Mode:</span> Offline
+              <span className="font-semibold">Mode:</span>
+              <span className="text-gray-700">Offline</span>
             </div>
           </div>
 
@@ -477,7 +489,7 @@ const TeacherDashboard = () => {
           <div>
             <h3 className="text-sm font-semibold text-gray-800 mb-2">Key Features</h3>
             <ul className="space-y-1">
-              {['Conceptual clarity', 'Problem solving', 'Regular assessments'].map((f, i) => (
+              {["Conceptual clarity", "Problem solving", "Regular assessments"].map((f, i) => (
                 <li key={i} className="flex items-center gap-2 text-gray-600 text-sm">
                   <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                   {f}
@@ -534,7 +546,7 @@ const TeacherDashboard = () => {
       )}
 
       {/* Header */}
-      <header className="bg-white shadow-md border-b border-gray-100">
+      {/* <header className="bg-white shadow-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
@@ -542,6 +554,23 @@ const TeacherDashboard = () => {
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-xl font-extrabold text-gray-900">Welcome, <span className="text-indigo-600">Mr. Himanshu Parnami</span></h1>
+            </div>
+            <button className="bg-gradient-to-r from-red-500 to-red-700 hover:opacity-90 text-white px-4 py-2 rounded-lg font-medium transition">
+              Logout
+            </button>
+          </div>
+        </div>
+      </header> */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-lg sm:text-xl font-extrabold text-gray-900">
+                Welcome, <span className="text-indigo-600">Mr. Himanshu Parnami</span>
+              </h1>
             </div>
             <button className="bg-gradient-to-r from-red-500 to-red-700 hover:opacity-90 text-white px-4 py-2 rounded-lg font-medium transition">
               Logout
