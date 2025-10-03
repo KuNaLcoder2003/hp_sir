@@ -215,6 +215,48 @@ student_router.get('/content/:folderId/:subFolderId', async (req: any, res: expr
         })
     }
 })
+
+student_router.get('/videos/:subFolderId', async (req: any, res: express.Response) => {
+    try {
+        const subFolderId = req.params.subFolderId
+        if (!subFolderId) {
+            res.status(400).json({
+                message: 'Bad request'
+            })
+            return
+        }
+        const subFolder = await prisma.subFolders.findFirst({
+            where: { id: Number(subFolderId) }
+        })
+        if (!subFolder) {
+            res.status(404).json({
+                message: 'No subfolder found'
+            })
+            return
+        }
+
+        const videos = await prisma.videos.findMany({
+            where: {
+                sub_folder_id: Number(subFolderId)
+            }
+        })
+        if (!videos) {
+            res.status(404).json({
+                message: 'Folder not found'
+            })
+            return
+        }
+        res.status(200).json({
+            videos,
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+
 student_router.post('/register', async (req: express.Request, res: express.Response) => {
     try {
         const { first_name, last_name, email, password, batch } = req.body as New_Registration;

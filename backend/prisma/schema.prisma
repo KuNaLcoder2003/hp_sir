@@ -136,6 +136,7 @@ model SubFolders {
   subfolder_name String   @db.VarChar(200)
   uploaded_on  DateTime @default(now())
   folder_id Int
+  type String @db.VarChar(200) @default("notes")
   folder Folder @relation(fields: [folder_id] , references: [id])
   videos Videos[]
   content Content[]

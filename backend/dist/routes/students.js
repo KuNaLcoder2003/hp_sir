@@ -205,6 +205,46 @@ student_router.get('/content/:folderId/:subFolderId', (req, res) => __awaiter(vo
         });
     }
 }));
+student_router.get('/videos/:subFolderId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const subFolderId = req.params.subFolderId;
+        if (!subFolderId) {
+            res.status(400).json({
+                message: 'Bad request'
+            });
+            return;
+        }
+        const subFolder = yield prisma.subFolders.findFirst({
+            where: { id: Number(subFolderId) }
+        });
+        if (!subFolder) {
+            res.status(404).json({
+                message: 'No subfolder found'
+            });
+            return;
+        }
+        const videos = yield prisma.videos.findMany({
+            where: {
+                sub_folder_id: Number(subFolderId)
+            }
+        });
+        if (!videos) {
+            res.status(404).json({
+                message: 'Folder not found'
+            });
+            return;
+        }
+        res.status(200).json({
+            videos,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+}));
 student_router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { first_name, last_name, email, password, batch } = req.body;

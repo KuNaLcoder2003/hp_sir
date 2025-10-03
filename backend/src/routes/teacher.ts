@@ -644,9 +644,63 @@ teacher_router.post('/content/:subjectId/:sub_folder_id', upload.single('content
     }
 })
 
+teacher_router.post('/videos/:sub_folder_id', async (req: express.Request, res: express.Response) => {
+
+    const sub_folder_id = req.params.sub_folder_id;
+    const { video_name, url } = req.body
+
+    try {
+        if (!sub_folder_id) {
+            res.status(400).json({
+                message: 'Bad request'
+            })
+            return
+        }
+        if (!video_name) {
+            res.status(400).json({
+                message: 'Missing feilds'
+            })
+            return
+        }
+
+        // const buffer = Buffer.from(file.buffer)
+        // const result = await uploadOnCloud(buffer, "class_content", "raw")
+        // if (!result.valid) {
+        //     res.status(400).json({
+        //         message: 'Error uploading content'
+        //     })
+        //     return
+        // }
+        const new_content = await prisma.videos.create({
+            data: {
+                video_name: video_name,
+                type: 'MP4',
+                content_url: url,
+                uploaded_on: new Date(),
+                sub_folder_id: Number(sub_folder_id)
+            }
+        })
+        if (!new_content) {
+            res.status(400).json({
+                message: 'Error creating a new content'
+            })
+            return
+        }
+        res.status(200).json({
+            message: 'Succesfully uploaded!',
+            new_content,
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Something went wrong'
+        })
+    }
+})
+
 teacher_router.post('/createSubFolder/:folderId', async (req: any, res: express.Response) => {
     try {
-        const { sub_folder_name } = req.body;
+        const { sub_folder_name, type } = req.body;
         const folderId = req.params.folderId;
 
         if (!folderId) {
@@ -678,7 +732,8 @@ teacher_router.post('/createSubFolder/:folderId', async (req: any, res: express.
         const new_folder = await prisma.subFolders.create({
             data: {
                 folder_id: Number(folderId),
-                subfolder_name: sub_folder_name
+                subfolder_name: sub_folder_name,
+                type: type
             }
         })
         if (!new_folder) {
