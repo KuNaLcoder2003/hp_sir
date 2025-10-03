@@ -138,6 +138,7 @@ student_router.get('/subFolders/:folderId', async (req: any, res: express.Respon
         const folder = await prisma.folder.findFirst({
             where: { id: Number(folderId) }
         })
+
         if (!folder) {
             res.status(404).json({
                 message: 'Folder not found'
@@ -151,7 +152,8 @@ student_router.get('/subFolders/:folderId', async (req: any, res: express.Respon
         })
 
         res.status(200).json({
-            subFolders
+            subFolders,
+            subjectId: folder.subject_id
         })
 
 
@@ -203,7 +205,8 @@ student_router.get('/content/:folderId/:subFolderId', async (req: any, res: expr
             return
         }
         res.status(200).json({
-            content
+            content,
+            subjectId: folder.subject_id
         })
     } catch (error) {
         console.log(error)

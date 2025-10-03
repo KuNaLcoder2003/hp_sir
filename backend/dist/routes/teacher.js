@@ -573,7 +573,7 @@ teacher_router.post("/subject/:batchId", (req, res) => __awaiter(void 0, void 0,
         });
     }
 }));
-teacher_router.post('/content/:subjectId/:sub_folder_id ', upload.single('content'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+teacher_router.post('/content/:subjectId/:sub_folder_id', upload.single('content'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const subjectId = req.params.subjectId;
     const sub_folder_id = req.params.sub_folder_id;
     const { content_name, type } = req.body;
@@ -638,7 +638,7 @@ teacher_router.post('/content/:subjectId/:sub_folder_id ', upload.single('conten
 }));
 teacher_router.post('/createSubFolder/:folderId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { sub_folder_name } = req.body.folder_deatils;
+        const { sub_folder_name } = req.body;
         const folderId = req.params.folderId;
         if (!folderId) {
             res.status(400).json({

@@ -581,7 +581,7 @@ teacher_router.post("/subject/:batchId", async (req: express.Request, res: expre
     }
 })
 
-teacher_router.post('/content/:subjectId/:sub_folder_id ', upload.single('content'), async (req: express.Request, res: express.Response) => {
+teacher_router.post('/content/:subjectId/:sub_folder_id', upload.single('content'), async (req: express.Request, res: express.Response) => {
     const subjectId = req.params.subjectId
     const sub_folder_id = req.params.sub_folder_id;
     const { content_name, type } = req.body
@@ -646,7 +646,7 @@ teacher_router.post('/content/:subjectId/:sub_folder_id ', upload.single('conten
 
 teacher_router.post('/createSubFolder/:folderId', async (req: any, res: express.Response) => {
     try {
-        const { sub_folder_name } = req.body.folder_deatils;
+        const { sub_folder_name } = req.body;
         const folderId = req.params.folderId;
 
         if (!folderId) {

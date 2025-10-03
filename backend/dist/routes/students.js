@@ -143,7 +143,8 @@ student_router.get('/subFolders/:folderId', (req, res) => __awaiter(void 0, void
             }
         });
         res.status(200).json({
-            subFolders
+            subFolders,
+            subjectId: folder.subject_id
         });
     }
     catch (error) {
@@ -193,7 +194,8 @@ student_router.get('/content/:folderId/:subFolderId', (req, res) => __awaiter(vo
             return;
         }
         res.status(200).json({
-            content
+            content,
+            subjectId: folder.subject_id
         });
     }
     catch (error) {
