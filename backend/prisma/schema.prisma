@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model student {
+    id String @id @default(uuid())
+    first_name String @db.VarChar(255)
+    last_name String @db.VarChar(255)
+    email String @db.VarChar(255)
+    mobile String @db.VarChar(255)
+    address String @db.VarChar(255)
+    class String @db.VarChar(255)
+    registered_batch_id String
+    batch batch @relation(fields: [registered_batch_id] , references: [id])
+}
+
+model batch {
+    id String @id @default(uuid())
+    batch_name String @db.VarChar(255)
+    batch_description String @db.VarChar(255)
+    start_date DateTime 
+    currently_accepting Boolean @default(true)
+    chapters chapter[]
+    student student[]
+}
+
+model chapter {
+    id String @id @default(uuid())
+    chapter_name String @db.VarChar(255)
+    batch_id String
+    batch batch @relation(fields: [batch_id] , references: [id])
+    material material[]
+    video video[]
+}
+
+model material {
+    id String @id @default(uuid())
+    notes_title String @db.VarChar(255)
+    chapter_id String
+    notes_link String
+    type String
+    chapter chapter @relation(fields: [chapter_id] , references: [id])
+}
+
+model video {
+    id String @id @default(uuid())
+    video_title String @db.VarChar(255)
+    chapter_id String
+    video_link String 
+    chapter chapter @relation(fields: [chapter_id] , references: [id])
+}
