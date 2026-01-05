@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.9.3"}
+{"root":["./src/index.ts","./src/prisma.ts","./src/functions/cloudinary.ts","./src/middlewares/authmiddleware.ts","./src/routes/batch.ts","./src/routes/chapter.ts","./src/routes/index.ts","./src/routes/notes.ts","./src/routes/video.ts"],"version":"5.9.3"}
