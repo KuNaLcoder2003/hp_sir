@@ -1,7 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import type React from "react";
 import { Link } from "react-router-dom";
-import FooterSection from "./FooterSection";
 
 const NotFound: React.FC = () => {
     return (
