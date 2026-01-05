@@ -31,7 +31,7 @@ chapterRouter.post('/:batchId', authMiddleware, async (req: express.Request, res
                 }
             })
             return { chapter }
-        })
+        }, { timeout: 20000, maxWait: 10000 })
 
         if (!response || !response.chapter) {
             res.status(403).json({
@@ -48,6 +48,70 @@ chapterRouter.post('/:batchId', authMiddleware, async (req: express.Request, res
         res.status(500).json({
             error: error,
             message: 'Something went wrong',
+            valid: false
+        })
+    }
+})
+
+chapterRouter.get('/chapterDetails/:chapterId', async (req: express.Request, res: express.Response) => {
+    try {
+        const chapterId = req.params.chapterId;
+        if (!chapterId) {
+            res.status(400).json({
+                message: "Bad request",
+                valid: false
+            })
+            return
+        }
+        const chapter = await prisma.chapter.findUnique({
+            where: {
+                id: chapterId
+            }
+        })
+        if (!chapter) {
+            res.status(404).json({
+                message: 'Chpater does not exists'
+            })
+            return
+        }
+        const response = await prisma.$transaction(async (tx) => {
+            const notes = await tx.material.findMany({
+                where: {
+                    chapter_id: chapterId
+                },
+                select: {
+                    notes_link: true,
+                    notes_title: true,
+                    id: true,
+                    type: true
+                }
+            })
+
+            const videos = await tx.video.findMany({
+                where: {
+                    chapter_id: chapter.id
+                },
+                select: {
+                    video_link: true,
+                    video_title: true
+                }
+            })
+            return { notes, videos }
+        })
+
+        if (!response) {
+            res.status(403).json({
+                message: "Unable to get Chapter details"
+            })
+            return
+        }
+        res.status(200).json({
+            material: response.notes,
+            videos: response.videos
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: "Something went wrong",
             valid: false
         })
     }
