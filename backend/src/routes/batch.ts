@@ -10,7 +10,7 @@ interface NewBatch {
 }
 batchRouter.post('/', authMiddleware, async (req: express.Request, res: express.Response) => {
     try {
-        const batch_details: NewBatch = req.body;
+        const batch_details: NewBatch = req.body; ``
         console.log('Reached here ')
         if (!batch_details || !batch_details.batch_description || !batch_details.batch_name) {
             res.status(400).json({
