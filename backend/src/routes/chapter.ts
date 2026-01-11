@@ -92,6 +92,7 @@ chapterRouter.get('/chapterDetails/:chapterId', async (req: express.Request, res
                     chapter_id: chapter.id
                 },
                 select: {
+                    id: true,
                     video_link: true,
                     video_title: true
                 }
@@ -107,7 +108,8 @@ chapterRouter.get('/chapterDetails/:chapterId', async (req: express.Request, res
         }
         res.status(200).json({
             material: response.notes,
-            videos: response.videos
+            videos: response.videos,
+            valid: true
         })
     } catch (error) {
         res.status(500).json({
