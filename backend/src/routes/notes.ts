@@ -27,7 +27,7 @@ notesRouter.post('/:chapterId', authMiddleware, upload.single('material'), async
             })
             return
         }
-        if (!!material_file) {
+        if (!material_file) {
             res.status(400).json({
                 message: "Material file is missing",
                 valid: false
@@ -49,7 +49,7 @@ notesRouter.post('/:chapterId', authMiddleware, upload.single('material'), async
         }
 
         const response = await prisma.$transaction(async (tx) => {
-            const result = await uploadOnCloudinary(file_buffer, "hp_sir_notes", "raw");
+            const result = await uploadOnCloudinary(file_buffer, "hp_sir_notes", "auto");
             if (result.error) {
                 throw new Error('Unable to upload to cloud : ')
             }
@@ -63,7 +63,7 @@ notesRouter.post('/:chapterId', authMiddleware, upload.single('material'), async
                 }
             })
             return { new_material }
-        })
+        }, { timeout: 20000, maxWait: 10000 })
         if (!response || !response.new_material) {
             res.status(403).json({
                 message: 'Unable to upload material',
