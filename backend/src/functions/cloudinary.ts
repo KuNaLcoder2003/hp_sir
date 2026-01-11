@@ -22,7 +22,7 @@ const uploadOnCloudinary = async (file: Buffer, folder_name: string, type: ("vid
     return new Promise((resolve, reject) => {
         const result = cloud.uploader.upload_stream({
             folder: folder_name,
-            type: type
+            resource_type: type
         },
             (error, res) => {
                 if (error) reject({ valid: false, error: error, url: "" })
