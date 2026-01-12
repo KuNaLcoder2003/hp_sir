@@ -13,6 +13,7 @@ interface Chapters {
     chapter_name: string;
     batch_id: string
 }
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const Batch: React.FC = () => {
     const [batch_details, setBatchDetails] = useState<BatchDetails>()
     const [loading, setLoading] = useState<boolean>(false)
@@ -24,7 +25,7 @@ const Batch: React.FC = () => {
         setLoading(true)
         try {
             const id = path.pathname.split('/').at(-1)
-            fetch('http://localhost:3000/api/v1/batch/batchDetails/' + id, {
+            fetch(`${BACKEND_URL}/batch/batchDetails/` + id, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
