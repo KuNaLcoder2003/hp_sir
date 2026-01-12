@@ -41,7 +41,10 @@ const SAMPLE_VIDEOS = [
         video_link: "https://www.youtube.com/embed/kSitHajEYKY",
     },
 ]
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const AdminBatch: React.FC = () => {
+
+
     const [batchDetails, setBatchDetails] = useState<BatchDetails>()
     const [chapters, setChapters] = useState<Chapters[]>([])
     const [loading, setLoading] = useState<boolean>(false);
@@ -75,7 +78,7 @@ const AdminBatch: React.FC = () => {
         setLoading(true)
         try {
             const id = path.pathname.split('/').at(-1);
-            fetch('http://localhost:3000/api/v1/batch/batchDetails/' + id, {
+            fetch(`${BACKEND_URL}/batch/batchDetails/` + id, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
