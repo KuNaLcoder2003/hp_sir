@@ -14,7 +14,7 @@ const getMaterial = async (chapterId: string): Promise<Response> => {
             }
         })
         const data = await response.json()
-        if (!data.valid) {
+        if (!data.material) {
             return {
                 valid: false,
                 message: data.message
