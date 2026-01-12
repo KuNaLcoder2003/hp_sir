@@ -3,6 +3,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import FooterSection from "./FooterSection";
+import getMaterial from "../functions/getMaterial";
 
 interface BatchDetails {
     batch_name: string;
@@ -13,6 +14,13 @@ interface Chapters {
     chapter_name: string;
     batch_id: string
 }
+
+interface Notes {
+    id: string,
+    notes_title: string,
+    notes_link: string,
+    type: string,
+}
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const Batch: React.FC = () => {
     const [batch_details, setBatchDetails] = useState<BatchDetails>()
@@ -20,6 +28,8 @@ const Batch: React.FC = () => {
     const [chapters, setChapters] = useState<Chapters[]>([])
     const path = useLocation();
     const [openChapterId, setOpenChapterId] = useState<string | null>(null)
+    const [notes, setNotes] = useState<Notes[]>([]);
+    const [loadingContent, setLoadingContent] = useState<boolean>(false)
 
     useEffect(() => {
         setLoading(true)
@@ -56,20 +66,20 @@ const Batch: React.FC = () => {
         }
     }, [])
 
-    const SAMPLE_MATERIAL = [
-        {
-            id: "1",
-            notes_title: "Introduction to Algebra",
-            notes_link: "https://example.com/algebra-notes",
-            type: "pdf",
-        },
-        {
-            id: "2",
-            notes_title: "Linear Equations Worksheet",
-            notes_link: "https://example.com/linear-equations",
-            type: "pdf",
-        },
-    ]
+    // const SAMPLE_MATERIAL = [
+    //     {
+    //         id: "1",
+    //         notes_title: "Introduction to Algebra",
+    //         notes_link: "https://example.com/algebra-notes",
+    //         type: "pdf",
+    //     },
+    //     {
+    //         id: "2",
+    //         notes_title: "Linear Equations Worksheet",
+    //         notes_link: "https://example.com/linear-equations",
+    //         type: "pdf",
+    //     },
+    // ]
 
     const SAMPLE_VIDEOS = [
         {
@@ -140,9 +150,13 @@ const Batch: React.FC = () => {
                                                     </div>
 
                                                     <button
-                                                        onClick={() =>
+                                                        onClick={async () => {
                                                             setOpenChapterId(isOpen ? null : chapter.id)
-                                                        }
+                                                            setLoadingContent(true)
+                                                            const response = await getMaterial(chapter.id)
+                                                            setLoadingContent(false)
+                                                            setNotes(response.data?.material)
+                                                        }}
                                                         className="cursor-pointer inline-flex items-center gap-1 px-4 py-2 bg-[#FF6B2C] text-white font-mono text-sm hover:opacity-90 transition-opacity"
                                                     >
                                                         View
@@ -155,66 +169,97 @@ const Batch: React.FC = () => {
 
                                                 {/* Dropdown Content */}
                                                 {isOpen && (
-                                                    <div className="border-t border-gray-200 bg-gray-50 px-6 py-6">
-                                                        <div className="grid md:grid-cols-2 gap-8">
+                                                    loadingContent ? <div className="border-t bg-gray-50 px-6 py-6 grid md:grid-cols-2 gap-8 animate-pulse">
 
-                                                            {/* LEFT — MATERIALS */}
-                                                            <div>
-                                                                <h4 className="font-mono font-bold text-gray-900 mb-4">
-                                                                    Notes & Material
-                                                                </h4>
-
-                                                                <ul className="space-y-3">
-                                                                    {SAMPLE_MATERIAL.map((note) => (
-                                                                        <li key={note.id}>
-                                                                            <a
-                                                                                href={note.notes_link}
-                                                                                target="_blank"
-                                                                                rel="noopener noreferrer"
-                                                                                className="font-mono text-md text-gray-700 hover:text-[#FF6B2C] transition-colors underline-offset-4 hover:underline"
-                                                                            >
-                                                                                {note.notes_title}
-                                                                            </a>
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
+                                                        <div>
+                                                            <div className="flex items-center gap-2 mb-3">
+                                                                <div className="w-4 h-4 rounded bg-gray-300" />
+                                                                <div className="h-4 w-24 bg-gray-300 rounded" />
                                                             </div>
 
-                                                            {/* RIGHT — VIDEOS */}
-                                                            <div>
-                                                                <h4 className="font-mono font-bold text-gray-900 mb-4">
-                                                                    Video Lectures
-                                                                </h4>
+                                                            <ul className="space-y-3">
+                                                                {Array.from({ length: 4 }).map((_, i) => (
+                                                                    <li key={i} className="flex items-center gap-2">
+                                                                        <div className="h-3 w-3 bg-gray-300 rounded" />
+                                                                        <div className="h-3 w-3/4 bg-gray-300 rounded" />
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
 
-                                                                <div className="space-y-4">
-                                                                    {SAMPLE_VIDEOS.map((video, i) => (
-                                                                        <a
-                                                                            key={i}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            className="flex items-center gap-4 p-3 rounded-lg border border-gray-200 bg-white hover:border-[#FF6B2C]/50 transition-colors"
-                                                                        >
-                                                                            {
-                                                                                video.video_link
-                                                                            }
-                                                                            {/* YouTube Mock */}
-                                                                            <div className="w-20 h-12 bg-gray-200 rounded-md flex items-center justify-center hidden">
-                                                                                {/* <span className="text-red-600 font-mono text-xs">
+
+                                                        <div>
+                                                            <div className="flex items-center gap-2 mb-3">
+                                                                <div className="w-4 h-4 rounded bg-gray-300" />
+                                                                <div className="h-4 w-20 bg-gray-300 rounded" />
+                                                            </div>
+
+                                                            <div className="w-full aspect-video rounded-lg bg-gray-300" />
+                                                        </div>
+                                                    </div> : (
+                                                        <div className="border-t border-gray-200 bg-gray-50 px-6 py-6">
+                                                            <div className="grid md:grid-cols-2 gap-8">
+
+                                                                {/* LEFT — MATERIALS */}
+                                                                <div>
+                                                                    <h4 className="font-mono font-bold text-gray-900 mb-4">
+                                                                        Notes & Material
+                                                                    </h4>
+
+                                                                    {
+                                                                        notes.length <= 0 ? <p className="font-mono text-md text-gray-700 transition-colors">No Notes uploaded yet</p> : <ul className="space-y-3">
+                                                                            {notes.map((note) => (
+                                                                                <li key={note.id}>
+                                                                                    <p
+
+
+                                                                                        onClick={() => window.open(`${note.notes_link}`, "_blank")}
+                                                                                        className="font-mono text-md text-gray-700 hover:text-[#FF6B2C] transition-colors underline-offset-4 hover:underline"
+                                                                                    >
+                                                                                        {note.notes_title}
+                                                                                    </p>
+                                                                                </li>
+                                                                            ))}
+                                                                        </ul>
+                                                                    }
+                                                                </div>
+
+                                                                {/* RIGHT — VIDEOS */}
+                                                                <div>
+                                                                    <h4 className="font-mono font-bold text-gray-900 mb-4">
+                                                                        Video Lectures
+                                                                    </h4>
+
+                                                                    <div className="space-y-4">
+                                                                        {SAMPLE_VIDEOS.map((video, i) => (
+                                                                            <a
+                                                                                key={i}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="flex items-center gap-4 p-3 rounded-lg border border-gray-200 bg-white hover:border-[#FF6B2C]/50 transition-colors"
+                                                                            >
+                                                                                {
+                                                                                    video.video_link
+                                                                                }
+                                                                                {/* YouTube Mock */}
+                                                                                <div className="w-20 h-12 bg-gray-200 rounded-md flex items-center justify-center hidden">
+                                                                                    {/* <span className="text-red-600 font-mono text-xs">
                                                                                     ▶
                                                                                 </span> */}
 
-                                                                            </div>
+                                                                                </div>
 
-                                                                            {/* <span className="font-mono text-sm text-gray-800">
+                                                                                {/* <span className="font-mono text-sm text-gray-800">
                                                                                 {video.video_title}
                                                                             </span> */}
-                                                                        </a>
-                                                                    ))}
+                                                                            </a>
+                                                                        ))}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
 
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    )
                                                 )}
                                             </div>
                                         )
